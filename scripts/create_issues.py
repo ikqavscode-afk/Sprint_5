@@ -7,11 +7,9 @@
 Повторный запуск безопасен: уже созданные Issues пропускаются.
 Запускается кнопкой в GitHub Actions (workflow "Setup issues") или локально через GitHub CLI.
 """
-import json, os, pathlib, re, subprocess, sys
+import json, re, subprocess, sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-REPO = os.environ.get("GITHUB_REPOSITORY", "ikqavscode-afk/Sprint_5")
-RAW = f"https://raw.githubusercontent.com/{REPO}/main/bug-reports/screenshots/"
+from config import RAW_SCREENSHOTS as RAW, REPO, ROOT
 apply = "--apply" in sys.argv
 CLS = {"validation-missing": "200 вместо 4xx", "unhandled-500": "500 вместо 400", "incomplete-response": "неполное тело", "wrong-status": "неверный код"}
 

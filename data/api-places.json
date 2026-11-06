@@ -365,7 +365,7 @@
     {
       "id": "GZ-P10",
       "topic": "Регистр email",
-      "problem": "Считаются ли «A@x.ru» и «a@x.ru» одним пользователем?",
+      "problem": "Считаются ли «A@example.com» и «a@example.com» одним пользователем?",
       "question": "Нужна ли нормализация?",
       "assumption": "Не проверяется."
     },

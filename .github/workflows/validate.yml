@@ -1,6 +1,6 @@
 name: Validate data
 
-# Проверяет, что JSON-данные корректны, а сгенерированные документы и коллекция Postman актуальны.
+# Проверяет JSON, чистоту контента и то, что сгенерированные документы и коллекции Postman актуальны.
 on:
   push:
   pull_request:
@@ -10,9 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
       - name: JSON is valid
         run: |
           for f in data/*.json postman/*.json; do python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$f"; done
+      - name: Content check (forbidden words, personal data)
+        run: python3 scripts/check_content.py
       - name: Generated files are up to date
         run: |
           python3 scripts/build_postman.py

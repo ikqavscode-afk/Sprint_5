@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Собирает Markdown-документы проекта из data/*.json. Запуск: python3 scripts/build_docs.py"""
-import json, pathlib, collections, re
+import json, collections, re
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+from config import COMMON_REPO_URL, ROOT, SITE
 J = lambda n: json.loads((ROOT / "data" / n).read_text())
 checks, bugs, gz, eps = J("api-checks.json"), J("api-bugs.json"), J("api-gray-zones.json"), J("api-endpoints.json")
-SITE = "https://ikqavscode-afk.github.io/Sprint_5/"
 B = {b["id"]: b for b in bugs}
 st = collections.Counter(c["status"] for c in checks)
 tot = len(checks)
@@ -128,7 +127,7 @@ sequenceDiagram
 | Мобильная регрессия | приложение Android | регрессия, решение о релизе |
 | **API (этот проект)** | **REST и XML методы** | **контракт, коды ответов, воспроизводимые запросы** |
 
-Предыдущие работы: [qa-test-documentation](https://github.com/ikqavscode-afk/qa-test-documentation).
+Предыдущие работы: [qa-test-documentation]({COMMON_REPO_URL}).
 ''')
 
 # ---------- project checklist.md

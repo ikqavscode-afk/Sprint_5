@@ -4,9 +4,9 @@
 Каждый дефект превращается в запрос с проверками ожидаемого поведения: после исправления
 все проверки должны проходить. Запуск: python3 scripts/build_postman.py
 """
-import json, pathlib, re
+import json, re
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+from config import ROOT
 bugs = json.loads((ROOT / "data/api-bugs.json").read_text())
 checks = {c["id"]: c for c in json.loads((ROOT / "data/api-checks.json").read_text())}
 FOLDERS = [("kits", "Наборы · kits"), ("delivery", "Доставка · fast-delivery"), ("orders", "Корзина · orders")]

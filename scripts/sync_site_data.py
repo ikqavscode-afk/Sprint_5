@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Копирует данные, скриншоты и файлы для сайта GitHub Pages в docs/."""
-import pathlib, shutil
+import shutil
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+from config import ROOT
 DOCS = ROOT / "docs"
 for sub in ("data", "media", "files"):
     (DOCS / sub).mkdir(parents=True, exist_ok=True)
