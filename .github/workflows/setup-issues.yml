@@ -1,0 +1,20 @@
+name: Setup issues
+
+# Запуск вручную: Actions → Setup issues → Run workflow.
+# Создаёт метки и Issues из data/api-bugs.json. Повторный запуск дубликатов не создаёт.
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  issues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create labels and issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/create_issues.py --apply

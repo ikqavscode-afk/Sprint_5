@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Учебник и квиз</title></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Учебник и квиз</h1><p class="lead">Краткая шпаргалка по HTTP и проверкам API на примерах из проекта и квиз на выбор кода ответа.</p>
+<div class="grid g3" id="cards"></div><h2>Квиз: какой код ответа ожидать?</h2><div class="card" id="quiz"></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('learn');
+const M=[['GET','получить данные','список продуктов в корзине'],['POST','создать или рассчитать','создать набор, рассчитать доставку'],['PUT','обновить','добавить продукты в корзину'],['DELETE','удалить','удалить корзину']];
+const ST=[[200,'успех','продукты добавлены'],[201,'создано','набор создан'],[400,'неверный запрос','отрицательное количество'],[401,'нет авторизации','корзина без токена'],[404,'не найдено','корзины с таким id нет'],[405,'метод не разрешён','GET вместо POST'],[409,'конфликт состояния','нет нужного количества на складе'],[500,'внутренняя ошибка','необработанное исключение']];
+$('#cards').innerHTML='<div class="card" style="margin:0"><b>Методы</b>'+M.map(m=>'<p style="margin:8px 0">'+mb(m[0])+' '+m[1]+'<br><span class="mut" style="font-size:13px">'+m[2]+'</span></p>').join('')+'</div>'+
+ '<div class="card" style="margin:0"><b>Коды ответа</b>'+ST.map(s=>'<p style="margin:8px 0">'+sp(s[0])+' '+s[1]+'<br><span class="mut" style="font-size:13px">'+s[2]+'</span></p>').join('')+'</div>'+
+ '<div class="card" style="margin:0"><b>Что проверять в ответе</b><ol style="padding-left:18px"><li>Код ответа</li><li>Формат тела (JSON, XML)</li><li>Структуру ошибки: code и message</li><li>Что в ошибке нет технических деталей</li><li>Что данные записаны в базу</li></ol></div>';
+const Q=[['Создан новый набор: какой код ожидать?',201,'Создание ресурса возвращает 201 Created.'],['Запрос корзины без токена авторизации',401,'Нет авторизации — 401.'],['Добавили в корзину продукт с quantity = −1',400,'Запрос нарушает контракт — 400. В проекте сервер вернул 200 (Б26).'],['Корзины с id = 99 нет, запрашиваем её',404,'Ресурс не найден — 404.'],['GET вместо POST на метод расчёта доставки',405,'Метод не разрешён — 405.'],['Продуктов нужного количества нет на складе',409,'Запрос корректен, но состояние не позволяет выполнить — 409.'],['Тело запроса содержит нарушенный XML',400,'Ошибка формата запроса — 400. В проекте сервер вернул 500 (Б16).'],['Продукт успешно добавлен в набор',200,'Успех — 200.']];
+let qi=0,sc=0;
+function show(){const box=$('#quiz');if(qi>=Q.length){box.innerHTML='<h3 class="mono" style="margin-top:0">Результат: '+sc+' из '+Q.length+'</h3><p>'+(sc>=7?'Отлично: коды ответов вы знаете.':'Повторите таблицу кодов выше и попробуйте ещё раз.')+'</p><button class="p" id="re">Пройти заново</button>';$('#re').onclick=()=>{qi=0;sc=0;show()};return}
+ const q=Q[qi];box.innerHTML='<p class="mut" style="margin-top:0">Вопрос '+(qi+1)+' из '+Q.length+'</p><p><b>'+esc(q[0])+'</b></p><div class="row">'+ST.map(s=>'<button data-c="'+s[0]+'" class="mono">'+s[0]+'</button>').join('')+'</div><div id="fb"></div>';
+ $$('button[data-c]',box).forEach(b=>b.onclick=()=>{const ok=+b.dataset.c===q[1];if(ok)sc++;$$('button[data-c]',box).forEach(x=>{x.disabled=true;if(+x.dataset.c===q[1])x.classList.add('ok')});if(!ok)b.classList.add('no');
+  $('#fb').innerHTML='<p>'+(ok?'✅ Верно. ':'❌ Нет, ожидается '+q[1]+'. ')+esc(q[2])+'</p><button class="p" id="nx">Дальше →</button>';$('#nx').onclick=()=>{qi++;show()}})}
+show();
+</script></body></html>

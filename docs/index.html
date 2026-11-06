@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Яндекс Прилавок — тестирование API</title></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Тестирование API: контракт на практике</h1>
+<p class="lead">Проверка методов бэкенда «Яндекс Прилавок» v3.1.1: наборы, корзина и доставка. Запрос → код ответа → тело → воспроизводимый дефект.</p>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>PUT /api/v1/orders/2</span></div><div class="body mono">
+<div class="mut">$ curl -X PUT {{baseUrl}}/api/v1/orders/2 -H "Authorization: Bearer …"</div>
+<pre id="ty1" class="type" style="border:0;background:none;padding:6px 0"></pre></div></div>
+<div class="grid g4" id="kpi"></div>
+<h2>Классы дефектов</h2><div class="card" id="cls"></div>
+<div class="grid g2"><div><h2>Ожидали → получили</h2><div class="card"><div id="hm" class="hm"></div><p class="mut" style="margin:10px 0 0;font-size:13px">Строки — ожидаемый код, столбцы — фактический.</p></div></div>
+<div><h2>Дефекты по методам</h2><div class="card" id="ep"></div></div></div>
+<h2>Методы API</h2><div class="grid g3" id="eps"></div>
+<h2>Эволюция подходов</h2><div class="ladder" id="lad"></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('index');
+const TXT='PUT /api/v1/orders/2\n{ "productsList": [ { "id": 1, "quantity": -1 } ] }\n\n← 200 OK            (ожидали 400 Bad Request)\n  дефект Б26: отрицательное количество принято';let k=0;const el=$('#ty1');
+(function t(){if(k<=TXT.length){el.textContent=TXT.slice(0,k++);setTimeout(t,k%40?14:140)}})();
+Promise.all([load('api-bugs.json'),load('api-checks.json'),load('api-endpoints.json')]).then(([b,c,e])=>{
+ const cnt=(a,f)=>a.filter(f).length,pass=cnt(c,x=>x.status=='Passed'),exec=pass+cnt(c,x=>x.status=='Failed');
+ $('#kpi').innerHTML=[[c.length,'проверок'],[Math.round(100*pass/exec)+'%','pass rate среди выполненных'],[b.length,'дефектов'],[cnt(b,x=>x.actual_status==500),'ответов 500']].map(([n,l])=>'<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>').join('');
+ const cl=Object.keys(CLS),mx=Math.max(...cl.map(k=>cnt(b,x=>x.class==k)));
+ $('#cls').innerHTML=cl.map(k=>{const n=cnt(b,x=>x.class==k);return '<div class="bar-row"><span>'+CLS[k]+'</span><div class="bar-h" style="width:'+(100*n/mx)+'%"></div><b class="mono">'+n+'</b></div>'}).join('');
+ const E=[200,400,401,404],A=[200,404,405,500];let h='<div class="h"></div>'+A.map(a=>'<div class="h">'+a+'</div>').join('');
+ E.forEach(x=>{h+='<div class="h">'+x+'</div>';A.forEach(a=>{const n=cnt(b,y=>y.expected_status==x&&y.actual_status==a);const bad=x!=a;h+='<div style="'+(n?'background:'+(bad?'#f851491f':'#3fb9501f')+';color:'+(bad?'var(--bad)':'var(--ok)'):'opacity:.35')+'">'+(n||'·')+'</div>'})});$('#hm').innerHTML=h;
+ const ar=Object.keys(AREA),m2=Math.max(...ar.map(k=>cnt(b,x=>x.area==k)));
+ $('#ep').innerHTML=ar.map(k=>{const n=cnt(b,x=>x.area==k);return '<div class="bar-row" style="grid-template-columns:130px 1fr 30px"><span>'+AREA[k]+'</span><div class="bar-h" style="width:'+(100*n/m2)+'%"></div><b class="mono">'+n+'</b></div>'}).join('');
+ $('#eps').innerHTML=e.map(x=>'<div class="card" style="margin:0">'+mb(x.method)+' <code>'+esc(x.path)+'</code><p style="margin:8px 0 4px"><b>'+esc(x.title)+'</b></p><p class="mut" style="margin:0;font-size:13px">'+esc(x.spec)+'</p></div>').join('');
+ const S=[['Ручное тестирование интерфейса','кейсы, баги, ретест'],['Тест-дизайн','классы эквивалентности и границы'],['Вёрстка и логика формы','чек-листы, кроссбраузерность'],['Мобильная регрессия','Android, решение о релизе'],['Тестирование API','контракт, коды ответов, коллекция Postman, OpenAPI']];
+ $('#lad').innerHTML=S.map((s,i)=>'<div class="step '+(i==4?'cur':'')+'"><div class="nn">'+(i+1)+'</div><div><b>'+s[0]+'</b><br><span class="mut" style="font-size:13px">'+s[1]+'</span></div></div>').join('');
+});
+</script></body></html>

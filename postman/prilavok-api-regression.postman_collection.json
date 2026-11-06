@@ -1,0 +1,1820 @@
+{
+  "info": {
+    "name": "Яндекс Прилавок API — регрессия дефектов",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Каждый запрос воспроизводит дефект и проверяет ожидаемое поведение по требованиям. Перед запуском заполните baseUrl и token в окружении."
+  },
+  "variable": [
+    {
+      "key": "kitId",
+      "value": "7"
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "00 Подготовка (для корзины)",
+      "item": [
+        {
+          "name": "Создать пользователя",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Имя\",\n  \"email\": \"user@example.com\",\n  \"phone\": \"+70000000000\",\n  \"comment\": \"ОК\",\n  \"address\": \"г. Город, ул. Улица, д. 1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Сохраните токен из ответа в переменную коллекции token (формат ответа смотрите в документации API)."
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Создать корзину",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productsList\": [\n    {\n      \"id\": 1,\n      \"quantity\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Корзина создана', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('orderId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Наборы · kits",
+      "item": [
+        {
+          "name": "[Б1] Продукт с несуществующим id не добавляется в набор",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /api/v1/kits/id/products добавление продукта с несуществующим id продукта (555)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 555,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б2] Продукт с параметром quantity=0 не добавляется в набор",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /api/v1/kits/id/products добавление при добавлении продукта с параметром quantity=0",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 0\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б3] Продукт с параметром quantity=-1 не добавляется в набор",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /api/v1/kits/id/products добавление при добавлении продукта с параметром quantity=-1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": -1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б4] Продукт с параметром quantity=null не добавляется в набор",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /api/v1/kits/id/products добавление при добавлении продукта с параметром quantity=null",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": null\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б5] Продукт не добавляется в новый пустой набор с параметром productsList пустой массив []",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /api/v1/kits/id/products добавление продукта с параметром productlist: [] (пустой массив)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б6] Продукт не добавляется в новый пустой набор с параметром productsList отсутсвует в теле",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /api/v1/kits/id/products добавление продукта с отсутстующим параметром ключа в теле запроса (productlist:)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n            \"id\": 1,\n            \"quantity\": null\n        }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б7] Продукт не добавляется в новый пустой набор если отсутствует заголовок",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /api/v1/kits/id/products добавление продукта с отсутствующим заголовком: Content-Type: application/json",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-1] Продукт не добавляется при при отрицательном значении id продукта",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /api/v1/kits/id/products добавление при добавлении продукта с отрицательным параметром id=-1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": -1,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-2] Продукт не добавляется при при значении id продукта за пределами значения int",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /api/v1/kits/id/products добавление продукта с параметром id=9999999999999999999999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 9999999999999999999999999999,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-3] Продукт не добавляется при при значении id продукта 0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /api/v1/kits/id/products добавление при добавлении продукта с отрицательным параметром id=0",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 0,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-4] Продукт не добавляется при при значении id продукта null",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /api/v1/kits/id/products добавление при добавлении продукта с отрицательным параметром id=null",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": null,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-5] Продукт не добавляется при при значении quantity продукта за пределами значения int",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kits/{{kitId}}/products"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /api/v1/kits/id/products добавление продукта с параметром  \"quantity\": 6575758393093498547387",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 6575758393093498547387\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Доставка · fast-delivery",
+      "item": [
+        {
+          "name": "[Б8] Доставка \"Привезем быстро\" время доставки 06.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 200. Фактически (дефект): 200.\n\nТело ответа неполное, при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при условии когда время deliveryTime не попадает в диапазон работы курьерской службы (06)",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>10</productsCount>\n    <productsWeight>4</productsWeight>\n    <deliveryTime>06</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Доставка невозможна\", function () { pm.expect(pm.response.text()).to.include('isItPossibleToDeliver=\"false\"'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б9] Доставка \"Привезем быстро\" время доставки 22.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 200. Фактически (дефект): 200.\n\nТело ответа неполное, при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при условии когда время deliveryTime не попадает в диапазон работы курьерской службы (22)",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>5</productsCount>\n    <productsWeight>2</productsWeight>\n    <deliveryTime>22</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Доставка невозможна\", function () { pm.expect(pm.response.text()).to.include('isItPossibleToDeliver=\"false\"'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б10] Доставка \"Привезем быстро\" время доставки 10, вес=0, количество=0.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении вес=0; количество=0",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>0</productsCount>\n    <productsWeight>0</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б11] Доставка \"Привезем быстро\" время доставки 10, вес=-1, количество=-0.5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении вес=-0.5; количество=-1",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>-1</productsCount>\n    <productsWeight>-0.5</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б12] Доставка \"Привезем быстро\" время доставки -19.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении Доставка -19",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>5</productsCount>\n    <productsWeight>2</productsWeight>\n    <deliveryTime>-19</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б13] Доставка \"Привезем быстро\" время доставки \"text\".",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении Доставка \"text\"",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>5</productsCount>\n    <productsWeight>5</productsWeight>\n    <deliveryTime>semvechera</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б14] Доставка \"Привезем быстро\" в теле запроса отсутствует параметр количество.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при отсутствии в теле запроса значения productsCount",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsWeight>5</productsWeight>\n    <deliveryTime>19</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б15] Доставка \"Привезем быстро\" в теле запроса отсутствует параметр вес.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при отсутствии в теле запроса значения productsWeight",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>5</productsCount>\n    <deliveryTime>19</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б16] Доставка \"Привезем быстро\", при ошибке в запросе XML.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при ошибке в теле запроса XML (незактрытый тег)",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>3</productsCount>\n    <productsWeight>3</productsWeight>\n    <deliveryTime>20</deliveryTime>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б17] Доставка \"Привезем быстро\" Количество= \"text\", Вес= \"text\"",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении Вес и Количество \"text\"",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>vosem</productsCount>\n    <productsWeight>chetyre</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б18] Доставка \"Привезем быстро\" Вес=null.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении Вес=null",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>8</productsCount>\n    <productsWeight>null</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б19] Доставка \"Привезем быстро\" Количество=null, Доставка=null,",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml  при значении Количетсво=null; Время доставки=null",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>null</productsCount>\n    <productsWeight>2</productsWeight>\n    <deliveryTime>null</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б20] Доставка \"Привезем быстро\" Вес=спецсимовол, Количество=спецсимвол.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении Количетсво=#; Вес=%",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>#</productsCount>\n    <productsWeight>%</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б21] Доставка \"Привезем быстро\" Доставка=спецсимвол.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении Время доставки=&",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>2</productsCount>\n    <productsWeight>5</productsWeight>\n    <deliveryTime>&</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б22] Доставка \"Привезем быстро\" Доставка=спецсимвол.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 OK при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при значении Время доставки=%",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>2</productsCount>\n    <productsWeight>5</productsWeight>\n    <deliveryTime>%</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-6] Доставка \"Привезем быстро\" Доставка=99999999999999999999.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 200. Фактически (дефект): 200.\n\nТело ответа неполное, при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при условии когда время deliveryTime=99999999999999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>10</productsCount>\n    <productsWeight>5</productsWeight>\n    <deliveryTime>99999999999999999999</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Доставка невозможна\", function () { pm.expect(pm.response.text()).to.include('isItPossibleToDeliver=\"false\"'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-7] Доставка \"Привезем быстро\" productsCount=99999999999999999999.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при условии когда productsCount=99999999999999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>99999999999999999999</productsCount>\n    <productsWeight>5</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Доставка невозможна\", function () { pm.expect(pm.response.text()).to.include('isItPossibleToDeliver=\"false\"'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-8] Доставка \"Привезем быстро\" productsWeight=99999999999999999999.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fast-delivery/v3.1.1/calculate-delivery.xml"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке POST /fast-delivery/v3.1.1/calculate-delivery.xml при условии когда productsWeight=99999999999999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "<InputModel>\n    <productsCount>5</productsCount>\n    <productsWeight>99999999999999999999</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Доставка невозможна\", function () { pm.expect(pm.response.text()).to.include('isItPossibleToDeliver=\"false\"'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Корзина · orders",
+      "item": [
+        {
+          "name": "[Б23] Список с добавленными продуктами не появляется если пользователь неавторизован",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 401. Фактически (дефект): 200.\n\n200 ОК при отправке GET /api/v1/orders/id вызов списка продуктов в корзине при неавторизванном пользователе",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б26] Продукты не добавляются в корзину при количестве c отрицательным числом",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке PUT /api/v1/orders/id добавление в корзину продукта при количестве c отрицательным числом quntity=-1 (Количество добавляется с отрицательным значением quantity)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": -1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б27] Продукты не добавляются в корзину при отсутствии строки quantity в теле запроса",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК PUT /api/v1/orders/id добавление в корзину продукта при отсутствии строки quantity в теле запроса",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б28] Продукты не добавляются в корзину при пустом JSON теле запроса",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК PUT /api/v1/orders/id добавление в корзину продукта при пустое тело JSON",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б29] Удаление корзины, удаленной ранее (повторный запрос)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 200. Фактически (дефект): 404.\n\n404 Not Found DELETE /api/v1/orders/id при удалении существующей корзины",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-9] Продукты не добавляются в корзину при пустом массиве “productsList” в теле запроса",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке PUT /api/v1/orders/id при пустом массиве “productsList” в теле запроса:",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-10] Продукты не добавляются в корзину при отсутствии параметра id корзины",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/"
+            },
+            "description": "Ожидаемо: 404. Фактически (дефект): 405.\n\n405 OK Method Not Allowed при отправке PUT /api/v1/orders/id при отсутствии id корзины в запросе",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-11] Продукты не добавляются в корзину при передаче неверных типов данных (число) вместо массив",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке PUT /api/v1/orders/id при передаче неверных типов данных (число) вместо массива",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": 123\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-12] Продукты не добавляются в корзину при отсутствии параметра quantity в теле запроса",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке PUT /api/v1/orders/id при отсутствии параметра quantity в теле запроса",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-13] Продукты не добавляются в корзину при значении id продукта за пределами значения int",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке PUT /api/v1/orders/id при значении id продукта за пределами значения int",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 767584583935958378583585,\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-14] Продукты не добавляются в корзину при значении quantity продукта 0",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке PUT /api/v1/orders/id при значении quantity=0",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 0\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-1-1] Продукты не добавляются в корзину при значении id продукта спецсимвол",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке PUT /api/v1/orders/id при значении id продукта спецсимвол id=\"№\"",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": \"№\",\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-1-2] Продукты не добавляются в корзину при значении количества продукта спецсимвол",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке PUT /api/v1/orders/id при значении количества продукта спецсимвол qauntity=\"%\"",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": \"%\"\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-1-3] Продукты не добавляются в корзину при id \"str\" = \"abc\"",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 500.\n\n500 Internal Server Error при отправке PUT /api/v1/orders/id при значении id продукта text id=\"abc\"",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": \"abc\",\n            \"quantity\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Б1-1-4] Продукты не добавляются в корзину при при количестве \"str\" = \"abc\"",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}"
+            },
+            "description": "Ожидаемо: 400. Фактически (дефект): 200.\n\n200 ОК при отправке PUT /api/v1/orders/id при значении количества продукта text qauntity=\"abc\"",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": \"abc\"\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Статус ответа: 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Ответ — JSON с кодом и сообщением\", function () { const j = pm.response.json(); pm.expect(j).to.have.property(\"code\"); pm.expect(j).to.have.property(\"message\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

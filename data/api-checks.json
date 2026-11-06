@@ -1,0 +1,1216 @@
+[
+ {
+  "id": "API-001",
+  "n": 1,
+  "endpoint": "Создание нового набора POST /api/v1/kits",
+  "group": "",
+  "title": "Набор создан внутри конкретной карточки",
+  "request": "Набор создан внутри конкретной карточки: \n{\n    \"cardId\": \"1\",\n    \"name\": \"Kit\"\n}",
+  "expected": "Код и статус ответа 201 Created",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-002",
+  "n": 2,
+  "endpoint": "Удаление набора DELETE /api/v1/kits/:id",
+  "group": "",
+  "title": "Набор удаляется из конкретной карточки",
+  "request": "Набор удаляется из конкретной карточки",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-003",
+  "n": 3,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Positive",
+  "title": "1 Продукт добавляется в набор",
+  "request": "1 Продукт добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-004",
+  "n": 4,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Positive",
+  "title": "2 Продукта добавляется в набор",
+  "request": "2 Продукта добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 2",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-005",
+  "n": 5,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Positive",
+  "title": "15 Продуктов добавляется в набор",
+  "request": "15 Продуктов добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\nПродукт \"id\": 2,\nКоличество \"quantity\": 1\nПродукт \"id\": 3,\nКоличество \"quantity\": 1\nПродукт \"id\": 4,\nКоличество \"quantity\": 1\nПродукт \"id\": 5,\nКоличество \"quantity\": 1\nПродукт \"id\": 6,\nКоличество \"quantity\": 1\nПродукт \"id\": 7,\nКоличество \"quantity\": 1\nПродукт \"id\": 8,\nКоличество \"quantity\": 1\nПродукт \"id\": 9,\nКоличество \"quantity\": 1\nПродукт \"id\": 10,\nКоличество \"quantity\": 1\nПродукт \"id\": 11,\nКоличество \"quantity\": 1\nПродукт \"id\": 12,\nКоличество \"quantity\": 1\nПродукт \"id\": 13,\nКоличество \"quantity\": 1\nПродукт \"id\": 14,\nКоличество \"quantity\": 1\nПродукт \"id\": 15,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-006",
+  "n": 6,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Positive",
+  "title": "29 Продуктов добавляется в набор",
+  "request": "29 Продуктов добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\nПродукт \"id\": 2,\nКоличество \"quantity\": 1\nПродукт \"id\": 3,\nКоличество \"quantity\": 1\nПродукт \"id\": 4,\nКоличество \"quantity\": 1\nПродукт \"id\": 5,\nКоличество \"quantity\": 1\nПродукт \"id\": 6,\nКоличество \"quantity\": 1\nПродукт \"id\": 7,\nКоличество \"quantity\": 1\nПродукт \"id\": 8,\nКоличество \"quantity\": 1\nПродукт \"id\": 9,\nКоличество \"quantity\": 1\nПродукт \"id\": 10,\nКоличество \"quantity\": 1\nПродукт \"id\": 11,\nКоличество \"quantity\": 1\nПродукт \"id\": 12,\nКоличество \"quantity\": 1\nПродукт \"id\": 13,\nКоличество \"quantity\": 1\nПродукт \"id\": 14,\nКоличество \"quantity\": 1\nПродукт \"id\": 15,\nКоличество \"quantity\": 1\nПродукт \"id\": 16,\nКоличество \"quantity\": 1\nПродукт \"id\": 17,\nКоличество \"quantity\": 1\nПродукт \"id\": 18,\nКоличество \"quantity\": 1\nПродукт \"id\": 19,\nКоличество \"quantity\": 1\nПродукт \"id\": 20,\nКоличество \"quantity\": 1\nПродукт \"id\": 21,\nКоличество \"quantity\": 1\nПродукт \"id\": 22,\nКоличество \"quantity\": 1\nПродукт \"id\": 23,\nКоличество \"quantity\": 1\nПродукт \"id\": 24,\nКоличество \"quantity\": 1\nПродукт \"id\": 25,\nКоличество \"quantity\": 1\nПродукт \"id\": 26,\nКоличество \"quantity\": 1\nПродукт \"id\": 27,\nКоличество \"quantity\": 1\nПродукт \"id\": 28,\nКоличество \"quantity\": 1\nПродукт \"id\": 29,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-007",
+  "n": 7,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Positive",
+  "title": "30 Продуктов добавляется в набор",
+  "request": "30 Продуктов добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\nПродукт \"id\": 2,\nКоличество \"quantity\": 1\nПродукт \"id\": 3,\nКоличество \"quantity\": 1\nПродукт \"id\": 4,\nКоличество \"quantity\": 1\nПродукт \"id\": 5,\nКоличество \"quantity\": 1\nПродукт \"id\": 6,\nКоличество \"quantity\": 1\nПродукт \"id\": 7,\nКоличество \"quantity\": 1\nПродукт \"id\": 8,\nКоличество \"quantity\": 1\nПродукт \"id\": 9,\nКоличество \"quantity\": 1\nПродукт \"id\": 10,\nКоличество \"quantity\": 1\nПродукт \"id\": 11,\nКоличество \"quantity\": 1\nПродукт \"id\": 12,\nКоличество \"quantity\": 1\nПродукт \"id\": 13,\nКоличество \"quantity\": 1\nПродукт \"id\": 14,\nКоличество \"quantity\": 1\nПродукт \"id\": 15,\nКоличество \"quantity\": 1\nПродукт \"id\": 16,\nКоличество \"quantity\": 1\nПродукт \"id\": 17,\nКоличество \"quantity\": 1\nПродукт \"id\": 18,\nКоличество \"quantity\": 1\nПродукт \"id\": 19,\nКоличество \"quantity\": 1\nПродукт \"id\": 20,\nКоличество \"quantity\": 1\nПродукт \"id\": 21,\nКоличество \"quantity\": 1\nПродукт \"id\": 22,\nКоличество \"quantity\": 1\nПродукт \"id\": 23,\nКоличество \"quantity\": 1\nПродукт \"id\": 24,\nКоличество \"quantity\": 1\nПродукт \"id\": 25,\nКоличество \"quantity\": 1\nПродукт \"id\": 26,\nКоличество \"quantity\": 1\nПродукт \"id\": 27,\nКоличество \"quantity\": 1\nПродукт \"id\": 28,\nКоличество \"quantity\": 1\nПродукт \"id\": 29,\nКоличество \"quantity\": 1\nПродукт \"id\": 30,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-008",
+  "n": 8,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Positive",
+  "title": "При добавлении продукта повторно с одним и тем же id продукта, количество этого продукта в наборе увеличивается",
+  "request": "При добавлении продукта повторно с одним и тем же id продукта, количество этого продукта в наборе увеличивается:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\n+\nПродукт \"id\": 1,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-009",
+  "n": 9,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "31 Продукт не добавляется в набор",
+  "request": "31 Продукт не добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\nПродукт \"id\": 2,\nКоличество \"quantity\": 1\nПродукт \"id\": 3,\nКоличество \"quantity\": 1\nПродукт \"id\": 4,\nКоличество \"quantity\": 1\nПродукт \"id\": 5,\nКоличество \"quantity\": 1\nПродукт \"id\": 6,\nКоличество \"quantity\": 1\nПродукт \"id\": 7,\nКоличество \"quantity\": 1\nПродукт \"id\": 8,\nКоличество \"quantity\": 1\nПродукт \"id\": 9,\nКоличество \"quantity\": 1\nПродукт \"id\": 10,\nКоличество \"quantity\": 1\nПродукт \"id\": 11,\nКоличество \"quantity\": 1\nПродукт \"id\": 12,\nКоличество \"quantity\": 1\nПродукт \"id\": 13,\nКоличество \"quantity\": 1\nПродукт \"id\": 14,\nКоличество \"quantity\": 1\nПродукт \"id\": 15,\nКоличество \"quantity\": 1\nПродукт \"id\": 16,\nКоличество \"quantity\": 1\nПродукт \"id\": 17,\nКоличество \"quantity\": 1\nПродукт \"id\": 18,\nКоличество \"quantity\": 1\nПродукт \"id\": 19,\nКоличество \"quantity\": 1\nПродукт \"id\": 20,\nКоличество \"quantity\": 1\nПродукт \"id\": 21,\nКоличество \"quantity\": 1\nПродукт \"id\": 22,\nКоличество \"quantity\": 1\nПродукт \"id\": 23,\nКоличество \"quantity\": 1\nПродукт \"id\": 24,\nКоличество \"quantity\": 1\nПродукт \"id\": 25,\nКоличество \"quantity\": 1\nПродукт \"id\": 26,\nКоличество \"quantity\": 1\nПродукт \"id\": 27,\nКоличество \"quantity\": 1\nПродукт \"id\": 28,\nКоличество \"quantity\": 1\nПродукт \"id\": 29,\nКоличество \"quantity\": 1\nПродукт \"id\": 30,\nКоличество \"quantity\": 1\nПродукт \"id\": 31,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\": \"Не более 30 продуктов в наборе\"\n}",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-010",
+  "n": 10,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт с несуществующим id не добавляется в набор",
+  "request": "Продукт с несуществующим id не добавляется в набор:\nНабор     id:7\nПродукт \"id\": 555,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Failed",
+  "bugs": [
+   "Б1"
+  ]
+ },
+ {
+  "id": "API-011",
+  "n": 11,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт с параметром quantity=0 не добавляется в набор",
+  "request": "Продукт с параметром quantity=0 не добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 0",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Failed",
+  "bugs": [
+   "Б2"
+  ]
+ },
+ {
+  "id": "API-012",
+  "n": 12,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт с параметром quantity=-1 не добавляется в набор",
+  "request": "Продукт с параметром quantity=-1 не добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": -1",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Failed",
+  "bugs": [
+   "Б3"
+  ]
+ },
+ {
+  "id": "API-013",
+  "n": 13,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт с параметром quantity=null не добавляется в набор",
+  "request": "Продукт с параметром quantity=null не добавляется в набор:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": null",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Failed",
+  "bugs": [
+   "Б4"
+  ]
+ },
+ {
+  "id": "API-014",
+  "n": 14,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется в новый пустой набор с параметром productsList пустой массив []",
+  "request": "Продукт не добавляется в новый пустой набор с параметром productsList пустой массив []:\nНабор     id:7\nПродукт строка параметра отсутствует в теле\nКоличество строка параметра отсутствует в теле\n\n{\n    \"productsList\": [\n        {\n        }\n    ]\n}",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Failed",
+  "bugs": [
+   "Б5"
+  ]
+ },
+ {
+  "id": "API-015",
+  "n": 15,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется в новый пустой набор с параметром productsList отсутсвует в теле",
+  "request": "Продукт не добавляется в новый пустой набор с параметром productsList отсутсвует в теле:\nНабор     id:7\nКлюч массива ОТСУТСТВУЕТ В ТЕЛЕ\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\n\n    \n        {\n            \"id\": 1,\n            \"quantity\": null\n        }",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Failed",
+  "bugs": [
+   "Б6"
+  ]
+ },
+ {
+  "id": "API-016",
+  "n": 16,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется в новый пустой набор если отсутствует заголовок",
+  "request": "Продукт не добавляется в новый пустой набор если отсутствует заголовок:\nContent-Type: application/json\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Failed",
+  "bugs": [
+   "Б7"
+  ]
+ },
+ {
+  "id": "API-017",
+  "n": 17,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при неверном формате JSON",
+  "request": "Продукт не добавляется при неверном формате JSON:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\n{\n    \"productsList\": [\n        {\n            \"gf\":1,\n            \"quantity\": 1\n        }\n    ]\n}",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-018",
+  "n": 18,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при неверном формате JSON",
+  "request": "Продукт не добавляется при неверном формате JSON:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\n{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"prabtity\": 1\n        }\n    ]\n}",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.\n{\n       \"code\": 400,\n       \"message\":  \"Не все необходимые параметры были переданы\"\n}",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-019",
+  "n": 19,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при неверном формате JSON (XML)",
+  "request": "Продукт не добавляется при неверном формате JSON (XML):\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 1\n\n<InputModel>\n    <product id=\"1\" quantity=\"1\" />\n</InputModel>",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-020",
+  "n": 20,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при при отрицательном значении id продукта",
+  "request": "Продукт не добавляется при при отрицательном значении id продукта:\nНабор     id:7\nПродукт \"id\": -1,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.",
+  "status": "Failed",
+  "bugs": [
+   "Б1-1"
+  ]
+ },
+ {
+  "id": "API-021",
+  "n": 21,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при при значении id продукта за пределами значения int",
+  "request": "Продукт не добавляется при при значении id продукта за пределами значения int:\nНабор     id:7\nПродукт \"id\": 9999999999999999999999999999,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.",
+  "status": "Failed",
+  "bugs": [
+   "Б1-2"
+  ]
+ },
+ {
+  "id": "API-022",
+  "n": 22,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при при значении id продукта 0",
+  "request": "Продукт не добавляется при при значении id продукта 0:\nНабор     id:7\nПродукт \"id\": 0,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.",
+  "status": "Failed",
+  "bugs": [
+   "Б1-3"
+  ]
+ },
+ {
+  "id": "API-023",
+  "n": 23,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при при значении id продукта null",
+  "request": "Продукт не добавляется при при значении id продукта null:\nНабор     id:7\nПродукт \"id\": null,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.",
+  "status": "Failed",
+  "bugs": [
+   "Б1-4"
+  ]
+ },
+ {
+  "id": "API-024",
+  "n": 24,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при при значении quantity продукта за пределами значения int",
+  "request": "Продукт не добавляется при при значении quantity продукта за пределами значения int:\nНабор     id:7\nПродукт \"id\": 1,\nКоличество \"quantity\": 6575758393093498547387",
+  "expected": "Код и статус ответа  HTTP/1.1 400 Bad request.",
+  "status": "Failed",
+  "bugs": [
+   "Б1-5"
+  ]
+ },
+ {
+  "id": "API-025",
+  "n": 25,
+  "endpoint": "Работа с наборами POST /api/v1/kits/id/products",
+  "group": "Negative",
+  "title": "Продукт не добавляется при при отсутвии параметра id набора в запросе",
+  "request": "Продукт не добавляется при при отсутвии параметра id набора в запросе:\n\nПродукт \"id\": 1,\nКоличество \"quantity\": 1",
+  "expected": "Код и статус ответа  HTTP/1.1 404 Not Found",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-026",
+  "n": 26,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 07",
+  "request": "Доставка \"Привезем быстро\" время доставки 07\n<InputModel>\n    <productsCount>1</productsCount>\n    <productsWeight>0.1</productsWeight>\n    <deliveryTime>07</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"23\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-027",
+  "n": 27,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 08",
+  "request": "Доставка \"Привезем быстро\" время доставки 08\n<InputModel>\n    <productsCount>2</productsCount>\n    <productsWeight>0.2</productsWeight>\n    <deliveryTime>08</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"23\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-028",
+  "n": 28,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 09",
+  "request": "Доставка \"Привезем быстро\" время доставки 09\n<InputModel>\n    <productsCount>3</productsCount>\n    <productsWeight>1.0</productsWeight>\n    <deliveryTime>09</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"23\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-029",
+  "n": 29,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 10",
+  "request": "Доставка \"Привезем быстро\" время доставки 10\n<InputModel>\n    <productsCount>4</productsCount>\n    <productsWeight>2.4</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"23\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-030",
+  "n": 30,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 11",
+  "request": "Доставка \"Привезем быстро\" время доставки 11\n<InputModel>\n    <productsCount>5</productsCount>\n    <productsWeight>2.5</productsWeight>\n    <deliveryTime>11</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"23\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-031",
+  "n": 31,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 12",
+  "request": "Доставка \"Привезем быстро\" время доставки 12\n<InputModel>\n    <productsCount>6</productsCount>\n    <productsWeight>2.0</productsWeight>\n    <deliveryTime>12</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"23\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-032",
+  "n": 32,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 13",
+  "request": "Доставка \"Привезем быстро\" время доставки 13\n<InputModel>\n    <productsCount>7</productsCount>\n    <productsWeight>1.5</productsWeight>\n    <deliveryTime>13</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"23\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-033",
+  "n": 33,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 14",
+  "request": "Доставка \"Привезем быстро\" время доставки 14\n<InputModel>\n    <productsCount>8</productsCount>\n    <productsWeight>0.1</productsWeight>\n    <deliveryTime>14</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-034",
+  "n": 34,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 15",
+  "request": "Доставка \"Привезем быстро\" время доставки 15\n<InputModel>\n    <productsCount>9</productsCount>\n    <productsWeight>0.2</productsWeight>\n    <deliveryTime>15</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-035",
+  "n": 35,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 16",
+  "request": "Доставка \"Привезем быстро\" время доставки 16\n<InputModel>\n    <productsCount>10</productsCount>\n    <productsWeight>1.0</productsWeight>\n    <deliveryTime>16</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-036",
+  "n": 36,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 17",
+  "request": "Доставка \"Привезем быстро\" время доставки 17\n<InputModel>\n    <productsCount>11</productsCount>\n    <productsWeight>2.4</productsWeight>\n    <deliveryTime>17</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-037",
+  "n": 37,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 18",
+  "request": "Доставка \"Привезем быстро\" время доставки 18\n<InputModel>\n    <productsCount>12</productsCount>\n    <productsWeight>2.5</productsWeight>\n    <deliveryTime>18</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-038",
+  "n": 38,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 19",
+  "request": "Доставка \"Привезем быстро\" время доставки 19\n<InputModel>\n    <productsCount>13</productsCount>\n    <productsWeight>2.0</productsWeight>\n    <deliveryTime>19</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-039",
+  "n": 39,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 20",
+  "request": "Доставка \"Привезем быстро\" время доставки 20\n<InputModel>\n    <productsCount>14</productsCount>\n    <productsWeight>1.5</productsWeight>\n    <deliveryTime>20</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-040",
+  "n": 40,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 21",
+  "request": "Доставка \"Привезем быстро\" время доставки 21\n<InputModel>\n    <productsCount>1</productsCount>\n    <productsWeight>2.6</productsWeight>\n    <deliveryTime>21</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-041",
+  "n": 41,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 07",
+  "request": "Доставка \"Привезем быстро\" время доставки 07\n<InputModel>\n    <productsCount>2</productsCount>\n    <productsWeight>2.7</productsWeight>\n    <deliveryTime>07</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-042",
+  "n": 42,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 08",
+  "request": "Доставка \"Привезем быстро\" время доставки 08\n<InputModel>\n    <productsCount>3</productsCount>\n    <productsWeight>4.0</productsWeight>\n    <deliveryTime>08</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-043",
+  "n": 43,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 09",
+  "request": "Доставка \"Привезем быстро\" время доставки 09\n<InputModel>\n    <productsCount>4</productsCount>\n    <productsWeight>5.9</productsWeight>\n    <deliveryTime>09</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-044",
+  "n": 44,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 10",
+  "request": "Доставка \"Привезем быстро\" время доставки 10\n<InputModel>\n    <productsCount>5</productsCount>\n    <productsWeight>6.0</productsWeight>\n    <deliveryTime>10</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"0\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-045",
+  "n": 45,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 11",
+  "request": "Доставка \"Привезем быстро\" время доставки 11\n<InputModel>\n    <productsCount>15</productsCount>\n    <productsWeight>2.0</productsWeight>\n    <deliveryTime>11</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"99\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-046",
+  "n": 46,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Positive",
+  "title": "Доставка \"Привезем быстро\" время доставки 12",
+  "request": "Доставка \"Привезем быстро\" время доставки 12\n<InputModel>\n    <productsCount>7</productsCount>\n    <productsWeight>8.0</productsWeight>\n    <deliveryTime>12</deliveryTime>\n</InputModel>",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" isItPossibleToDeliver=\"true\" hostDeliveryCost=\"43\" clientDeliveryCost=\"99\">\n    <toBeDeliveredTime>\n        <min>25</min>\n        <max>30</max>\n    </toBeDeliveredTime>\n</response>",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-047",
+  "n": 47,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" время доставки 06.",
+  "request": "Доставка \"Привезем быстро\" время доставки 06.\nproductsCount=10, \nproductsWeight=4, \ndeliveryTime=06",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Failed",
+  "bugs": [
+   "Б8"
+  ]
+ },
+ {
+  "id": "API-048",
+  "n": 48,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" время доставки 22.",
+  "request": "Доставка \"Привезем быстро\" время доставки 22.\nproductsCount=5, \nproductsWeight=2, \ndeliveryTime=22",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Failed",
+  "bugs": [
+   "Б9"
+  ]
+ },
+ {
+  "id": "API-049",
+  "n": 49,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" время доставки 10, вес=0, количество=0.",
+  "request": "Доставка \"Привезем быстро\" время доставки 10, вес=0, количество=0.\nproductsCount=0, \nproductsWeight=0, \ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б10"
+  ]
+ },
+ {
+  "id": "API-050",
+  "n": 50,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" время доставки 10, вес=-1, количество=-0.5",
+  "request": "Доставка \"Привезем быстро\" время доставки 10, вес=-1, количество=-0.5\nproductsCount=-1, \nproductsWeight=-0.5, \ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б11"
+  ]
+ },
+ {
+  "id": "API-051",
+  "n": 51,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" время доставки -19.",
+  "request": "Доставка \"Привезем быстро\" время доставки -19.\nproductsCount=5, \nproductsWeight=2, \ndeliveryTime=-19",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б12"
+  ]
+ },
+ {
+  "id": "API-052",
+  "n": 52,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" время доставки \"text\".",
+  "request": "Доставка \"Привезем быстро\" время доставки \"text\".\nproductsCount=5, \nproductsWeight=5, \ndeliveryTime=\"text\"",
+  "expected": "Код и статус ответа 200 OK\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б13"
+  ]
+ },
+ {
+  "id": "API-053",
+  "n": 53,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" в теле запроса отсутствует параметр количество.",
+  "request": "Доставка \"Привезем быстро\" в теле запроса отсутствует параметр количество.\n\nproductsWeight=3, \ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б14"
+  ]
+ },
+ {
+  "id": "API-054",
+  "n": 54,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\"  в теле запроса отсутствует параметр вес.",
+  "request": "Доставка \"Привезем быстро\"  в теле запроса отсутствует параметр вес.\nproductsCount=2, \n\ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б15"
+  ]
+ },
+ {
+  "id": "API-055",
+  "n": 55,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\", при ошибке в запросе XML.",
+  "request": "Доставка \"Привезем быстро\", при ошибке в запросе XML.\n<InputModel>\n    <productsCount>3</productsCount>\n    <productsWeight>3</productsWeight>\n    <deliveryTime>20</deliveryTime>\nНезакрытый тег",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б16"
+  ]
+ },
+ {
+  "id": "API-056",
+  "n": 56,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" при неверном URL",
+  "request": "Доставка \"Привезем быстро\" при неверном URL",
+  "expected": "Код и статус ответа 404 Not found",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-057",
+  "n": 57,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" при передаче неверного метода запроса (GET вместо POST)",
+  "request": "Доставка \"Привезем быстро\" при передаче неверного метода запроса (GET вместо POST)",
+  "expected": "Код и статус ответа 405 Method Not Allowed",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-058",
+  "n": 58,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" Количество= \"text\", Вес= \"text\"",
+  "request": "Доставка \"Привезем быстро\" Количество= \"text\", Вес= \"text\"\nproductsCount=\"vosem\", \nproductsWeight= \"chetyre\", \ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б17"
+  ]
+ },
+ {
+  "id": "API-059",
+  "n": 59,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" Вес=null.",
+  "request": "Доставка \"Привезем быстро\" Вес=null.\nproductsCount=8, \nproductsWeight=null, \ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б18"
+  ]
+ },
+ {
+  "id": "API-060",
+  "n": 60,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" Количество=null, Доставка=null,",
+  "request": "Доставка \"Привезем быстро\" Количество=null, Доставка=null,\nproductsCount=null, \nproductsWeight=3, \ndeliveryTime=null",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б19"
+  ]
+ },
+ {
+  "id": "API-061",
+  "n": 61,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" Вес=спецсимовол, Количество=спецсимвол.",
+  "request": "Доставка \"Привезем быстро\" Вес=спецсимовол, Количество=спецсимвол.\nproductsCount=\"#\", \nproductsWeight=\"%\", \ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б20"
+  ]
+ },
+ {
+  "id": "API-062",
+  "n": 62,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" Доставка=спецсимвол.",
+  "request": "Доставка \"Привезем быстро\" Доставка=спецсимвол.\nproductsCount=2, \nproductsWeight=2, \ndeliveryTime=\"&\"",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б21"
+  ]
+ },
+ {
+  "id": "API-063",
+  "n": 63,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" Доставка=спецсимвол.",
+  "request": "Доставка \"Привезем быстро\" Доставка=спецсимвол.\nproductsCount=2, \nproductsWeight=2, \ndeliveryTime=\"%\"",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б22"
+  ]
+ },
+ {
+  "id": "API-064",
+  "n": 64,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" Доставка=99999999999999999999.",
+  "request": "Доставка \"Привезем быстро\" Доставка=99999999999999999999.\nproductsCount=2, \nproductsWeight=2 \ndeliveryTime=99999999999999999999",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б1-6"
+  ]
+ },
+ {
+  "id": "API-065",
+  "n": 65,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" productsCount=99999999999999999999.",
+  "request": "Доставка \"Привезем быстро\" productsCount=99999999999999999999.\nproductsCount=99999999999999999999, \nproductsWeight=5, \ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б1-7"
+  ]
+ },
+ {
+  "id": "API-066",
+  "n": 66,
+  "endpoint": "Проверка работы доставки \"Привезем быстро\" POST /fast-delivery/v3.1.1/calculate-delivery.xml",
+  "group": "Negative",
+  "title": "Доставка \"Привезем быстро\" productsWeight=99999999999999999999.",
+  "request": "Доставка \"Привезем быстро\" productsWeight=99999999999999999999.\nproductsCount=5\nproductsWeight=99999999999999999999, \ndeliveryTime=10",
+  "expected": "Код и статус ответа 400 Bad request\nТело ответа:\n<response name=\"Привезём быстро\" \nisItPossibleToDeliver=\"false\"\n</response>",
+  "status": "Failed",
+  "bugs": [
+   "Б1-8"
+  ]
+ },
+ {
+  "id": "API-068",
+  "n": 68,
+  "endpoint": "Возможность получить список продуктов, которые добавили в корзину GET /api/v1/orders/id",
+  "group": "Positive",
+  "title": "Корзина успешно создается с добавленными продуктами, с присвоением id",
+  "request": "Корзина успешно создается с добавленными продуктами, с присвоением id",
+  "expected": "Код и статус ответа 200 Created",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-069",
+  "n": 69,
+  "endpoint": "Возможность получить список продуктов, которые добавили в корзину GET /api/v1/orders/id",
+  "group": "Positive",
+  "title": "Список добавленных продуктов появляется если пользователь авторизован",
+  "request": "Список добавленных продуктов появляется если пользователь авторизован",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-070",
+  "n": 70,
+  "endpoint": "Возможность получить список продуктов, которые добавили в корзину GET /api/v1/orders/id",
+  "group": "Negative",
+  "title": "Список с добавленными продуктами не появляется если пользователь неавторизован",
+  "request": "Список с добавленными продуктами не появляется если пользователь неавторизован",
+  "expected": "Код и статус ответа 401 Unauthorized",
+  "status": "Failed",
+  "bugs": [
+   "Б23"
+  ]
+ },
+ {
+  "id": "API-071",
+  "n": 71,
+  "endpoint": "Возможность получить список продуктов, которые добавили в корзину GET /api/v1/orders/id",
+  "group": "Negative",
+  "title": "Получение списка продуктов в несуществующей корзине",
+  "request": "Получение списка продуктов в несуществующей корзине",
+  "expected": "Код и статус ответа 404 Not Found",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-072",
+  "n": 72,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Positive",
+  "title": "Продукты при наличии необходимого количества на складе добавляются в корзину",
+  "request": "Продукты при наличии необходимого количества на складе добавляются в корзину",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-073",
+  "n": 73,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Positive",
+  "title": "При повторном добавлении продукта ,при наличии необходимого количества на складе количество данного продукта в корзине увеличитвается",
+  "request": "При повторном добавлении продукта ,при наличии необходимого количества на складе количество данного продукта в корзине увеличитвается",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-074",
+  "n": 74,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты при отсутствии необходимого количества на складе не добавляются в корзину",
+  "request": "Продукты при отсутствии необходимого количества на складе не добавляются в корзину",
+  "expected": "Код и статус ответа 409 Conflict",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-075",
+  "n": 75,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "При отсутсвии на складе продукты не добавляются в корзину",
+  "request": "При отсутсвии на складе продукты не добавляются в корзину",
+  "expected": "Код и статус ответа 409 Conflict",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-076",
+  "n": 76,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при id c отрицательным числом",
+  "request": "Продукты не добавляются в корзину при id c отрицательным числом\nid=-1",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-077",
+  "n": 77,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при количестве c отрицательным числом",
+  "request": "Продукты не добавляются в корзину при количестве c отрицательным числом\nqauntity=-1",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б26"
+  ]
+ },
+ {
+  "id": "API-078",
+  "n": 78,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при значении id продукта спецсимвол",
+  "request": "Продукты не добавляются в корзину при значении id продукта спецсимвол\nid=\"№\"",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-1-1"
+  ]
+ },
+ {
+  "id": "API-079",
+  "n": 79,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при значении количества продукта спецсимвол",
+  "request": "Продукты не добавляются в корзину при значении количества продукта спецсимвол\nqauntity=\"%\"",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-1-2"
+  ]
+ },
+ {
+  "id": "API-080",
+  "n": 80,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при id \"str\" = \"abc\"",
+  "request": "Продукты не добавляются в корзину при id \"str\" = \"abc\"\nid=\"abc\"",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-1-3"
+  ]
+ },
+ {
+  "id": "API-081",
+  "n": 81,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при при количестве \"str\" = \"abc\"",
+  "request": "Продукты не добавляются в корзину при при количестве \"str\" = \"abc\"\nqauntity=\"abc\"",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-1-4"
+  ]
+ },
+ {
+  "id": "API-082",
+  "n": 82,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при отсутствии строки id продукта в теле запроса",
+  "request": "Продукты не добавляются в корзину при отсутствии строки id продукта в теле запроса",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-083",
+  "n": 83,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при отсутствии строки quantity в теле запроса",
+  "request": "Продукты не добавляются в корзину при отсутствии строки quantity в теле запроса",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б27"
+  ]
+ },
+ {
+  "id": "API-084",
+  "n": 84,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при пустом JSON теле запроса",
+  "request": "Продукты не добавляются в корзину при пустом JSON теле запроса",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б28"
+  ]
+ },
+ {
+  "id": "API-085",
+  "n": 85,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при неверном формате в теле запроса (XML)",
+  "request": "Продукты не добавляются в корзину при неверном формате в теле запроса (XML)",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-086",
+  "n": 86,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при неверном метод (POST)",
+  "request": "Продукты не добавляются в корзину при неверном метод (POST)",
+  "expected": "Код и статус ответа 405 Metod not Allowed",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-087",
+  "n": 87,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при отсутствии строки “productsList” в теле запроса",
+  "request": "Продукты не добавляются в корзину при отсутствии строки “productsList” в теле запроса:\n{\n        {\n            \"id\": 1,\n            \"quantity\": 1\n        }\n}",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-088",
+  "n": 88,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при пустом массиве “productsList” в теле запроса",
+  "request": "Продукты не добавляются в корзину при пустом массиве “productsList” в теле запроса:\n{\n    \"productsList\": []\n}",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-9"
+  ]
+ },
+ {
+  "id": "API-089",
+  "n": 89,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при отсутствии параметра id корзины",
+  "request": "Продукты не добавляются в корзину при отсутствии параметра id корзины",
+  "expected": "Код и статус ответа 404 Not Found",
+  "status": "Failed",
+  "bugs": [
+   "Б1-10"
+  ]
+ },
+ {
+  "id": "API-090",
+  "n": 90,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при передаче неверных типов данных (число) вместо массива",
+  "request": "Продукты не добавляются в корзину при передаче неверных типов данных (число) вместо массива:\n\n{\"productsList\": 123}",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-11"
+  ]
+ },
+ {
+  "id": "API-091",
+  "n": 91,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при отсутствии параметра id продукта в теле запроса",
+  "request": "Продукты не добавляются в корзину при отсутствии параметра id продукта в теле запроса:\n{\n    \"productsList\": [\n        {\n            \"quantity\": 1\n        }\n    ]\n}",
+  "expected": "Код и статус ответа 409 Conflict",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-092",
+  "n": 92,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при отсутствии параметра quantity в теле запроса",
+  "request": "Продукты не добавляются в корзину при отсутствии параметра quantity в теле запроса:\n{\n    \"productsList\": [\n        {\n            \"id\": 1\n        }\n    ]\n}",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-12"
+  ]
+ },
+ {
+  "id": "API-093",
+  "n": 93,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при значении quantity продукта за пределами значения int",
+  "request": "Продукты не добавляются в корзину при значении quantity продукта за пределами значения int:\n{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 767584583935958378583585\n        }\n    ]\n}",
+  "expected": "Код и статус ответа 409 Conflict",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-094",
+  "n": 94,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при значении id продукта за пределами значения int",
+  "request": "Продукты не добавляются в корзину при значении id продукта за пределами значения int:\n{\n    \"productsList\": [\n        {\n            \"id\": 767584583935958378583585,\n            \"quantity\": 1\n        }\n    ]\n}",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-13"
+  ]
+ },
+ {
+  "id": "API-095",
+  "n": 95,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при значении id продукта 0",
+  "request": "Продукты не добавляются в корзину при значении id продукта 0:\n{\n    \"productsList\": [\n        {\n            \"id\": 0,\n            \"quantity\": 1\n        }\n    ]\n}",
+  "expected": "Код и статус ответа 409 Conflict",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-096",
+  "n": 96,
+  "endpoint": "Возможность добавлять продукты в корзину PUT /api/v1/orders/:id",
+  "group": "Negative",
+  "title": "Продукты не добавляются в корзину при значении quantity продукта 0",
+  "request": "Продукты не добавляются в корзину при значении quantity продукта 0:\n{\n    \"productsList\": [\n        {\n            \"id\": 1,\n            \"quantity\": 0\n        }\n    ]\n}",
+  "expected": "Код и статус ответа 400 Bad request",
+  "status": "Failed",
+  "bugs": [
+   "Б1-14"
+  ]
+ },
+ {
+  "id": "API-097",
+  "n": 97,
+  "endpoint": "Возможность добавлять продукты в корзину  DELETE /api/v1/orders/:id",
+  "group": "",
+  "title": "Удаление существующей корзины",
+  "request": "Удаление существующей корзины",
+  "expected": "Код и статус ответа 200 OK",
+  "status": "Failed",
+  "bugs": [
+   "Б29"
+  ]
+ },
+ {
+  "id": "API-098",
+  "n": 98,
+  "endpoint": "Возможность добавлять продукты в корзину  DELETE /api/v1/orders/:id",
+  "group": "",
+  "title": "Удаление корзины с несуществующим ID",
+  "request": "Удаление корзины с несуществующим ID",
+  "expected": "Код и статус ответа 404 Not Found",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-099",
+  "n": 99,
+  "endpoint": "Возможность добавлять продукты в корзину  DELETE /api/v1/orders/:id",
+  "group": "",
+  "title": "Удаление корзины без указания ID",
+  "request": "Удаление корзины без указания ID",
+  "expected": "Код и статус ответа 405 Method Not Allowed",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-100",
+  "n": 100,
+  "endpoint": "Возможность добавлять продукты в корзину  DELETE /api/v1/orders/:id",
+  "group": "",
+  "title": "Удаление корзины c ID: -1",
+  "request": "Удаление корзины c ID: -1",
+  "expected": "Код и статус ответа 404 Not Found",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-101",
+  "n": 101,
+  "endpoint": "Возможность добавлять продукты в корзину  DELETE /api/v1/orders/:id",
+  "group": "",
+  "title": "Удаление корзины c ID: 0",
+  "request": "Удаление корзины c ID: 0",
+  "expected": "Код и статус ответа 404 Not Found",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-102",
+  "n": 102,
+  "endpoint": "Возможность добавлять продукты в корзину  DELETE /api/v1/orders/:id",
+  "group": "",
+  "title": "Удаление корзины c ID: abc",
+  "request": "Удаление корзины c ID: abc",
+  "expected": "Код и статус ответа 404 Not Found",
+  "status": "Passed",
+  "bugs": []
+ },
+ {
+  "id": "API-103",
+  "n": 103,
+  "endpoint": "Возможность добавлять продукты в корзину  DELETE /api/v1/orders/:id",
+  "group": "",
+  "title": "Удаление корзины, удаленной ранее (повторный запрос)",
+  "request": "Удаление корзины, удаленной ранее (повторный запрос)",
+  "expected": "Код и статус ответа 404 Not Found",
+  "status": "Skipped",
+  "bugs": [
+   "Б29"
+  ]
+ }
+]

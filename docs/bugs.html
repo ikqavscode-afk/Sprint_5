@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Реестр дефектов</title></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Реестр дефектов</h1><p class="lead">Каждый дефект: запрос, ожидаемый и фактический ответ рядом, класс ошибки и серьёзность.</p>
+<div class="row"><input type="search" id="q" placeholder="Поиск  ( / )" style="flex:1;min-width:180px"><select id="cls"><option value="">Все классы</option></select><select id="ar"><option value="">Все методы</option></select><select id="sv"><option value="">Любая серьёзность</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
+<div class="mut" id="cnt"></div><div id="list"></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('bugs');let B=[];
+const first=s=>String(s).replace(/Код и статус ове?т[ао]:?\s*/,'').trim();
+function draw(){const q=$('#q').value.toLowerCase(),c=$('#cls').value,a=$('#ar').value,s=$('#sv').value;
+ const r=B.filter(b=>(!c||b.class==c)&&(!a||b.area==a)&&(!s||b.severity==s)&&(!q||(b.id+b.title+b.path+b.expected+b.actual).toLowerCase().includes(q)));
+ $('#cnt').textContent='Показано '+r.length+' из '+B.length;
+ $('#list').innerHTML=r.map(b=>'<div class="card" id="'+esc(b.id)+'"><details><summary>'+mb(b.method)+' <code>'+esc(b.path)+'</code> <b>'+esc(b.id)+'</b> '+sp(b.expected_status)+' → '+sp(b.actual_status)+' <span class="tag">'+CLS[b.class]+'</span> <span class="tag '+b.severity+'">'+b.severity+'</span>'+(b.leak?' <span class="tag high">утечка деталей</span>':'')+'</summary>'+
+ '<p style="margin:10px 0 4px">'+esc(b.title.replace(/^\d{3}\s+\S+(\s+\S+){0,3}\s+при отправке\s+/,''))+'</p><p class="mut" style="margin:0 0 6px;font-size:13px">Исходный приоритет: '+(b.priority_original=='critical'?'критический':'стандартный')+(b.check?' · проверка '+esc(b.check):'')+'</p>'+
+ (b.setup&&b.setup.length?'<p class="mut" style="font-size:13px">Подготовка: '+esc(b.setup.slice(0,3).join('; ').replace(/\n/g,' '))+'</p>':'')+
+ (b.request_body?'<h4 class="mono mut" style="margin:8px 0 4px">ТЕЛО ЗАПРОСА ('+b.content_type+')</h4><pre>'+esc(b.request_body)+'</pre>':'')+
+ '<div class="diff"><div><h4>ОЖИДАЛОСЬ</h4><pre class="e">'+esc(first(b.expected))+'</pre></div><div><h4>ПОЛУЧЕНО</h4><pre class="a">'+esc(first(b.actual))+'</pre></div></div>'+
+ (b.screenshot?'<img class="shot" loading="lazy" src="media/'+b.screenshot+'" alt="'+esc(b.id)+'">':'')+'</details></div>').join('');
+ if(location.hash){const e=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(e){e.querySelector('details').open=true;e.scrollIntoView()}}}
+load('api-bugs.json').then(d=>{B=d;$('#cls').innerHTML+=Object.entries(CLS).map(([k,v])=>'<option value="'+k+'">'+v+'</option>').join('');$('#ar').innerHTML+=Object.entries(AREA).map(([k,v])=>'<option value="'+k+'">'+v+'</option>').join('');
+ ['q','cls','ar','sv'].forEach(i=>$('#'+i).addEventListener('input',draw));draw()});
+</script></body></html>

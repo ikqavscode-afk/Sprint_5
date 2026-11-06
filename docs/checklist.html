@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Чек-лист тестировщика API</title></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Чек-лист тестировщика API</h1><p class="lead">Общий чек-лист для проверки любого метода API, оракул по кодам ответа, генератор негативных тестов и ретест.</p>
+<div class="tabs" id="tabs"><button class="on" data-t="list">Чек-лист</button><button data-t="oracle">Оракул кодов</button><button data-t="gen">Генератор негативных тестов</button><button data-t="ret">Ретест</button></div>
+<div id="list"><div class="prog"><i id="pb"></i></div><div class="mut" id="cnt" style="margin:6px 0"></div><div id="items"></div><div class="row"><button class="p" id="cp">Скопировать как Markdown</button><button id="rs">Сбросить</button></div></div>
+<div id="oracle" class="hide"></div>
+<div id="gen" class="hide"><div class="card"><div class="row"><input id="pn" placeholder="Имя параметра, например quantity" style="flex:1;min-width:200px"><select id="pt"><option value="int">Целое число</option><option value="num">Дробное число</option><option value="str">Строка</option><option value="arr">Массив</option></select><input id="mn" type="number" placeholder="min" style="width:90px"><input id="mx" type="number" placeholder="max" style="width:90px"><button class="p" id="go">Сгенерировать</button></div><div id="gout"></div><div class="row"><button id="gcp" class="hide">Скопировать как Markdown</button></div></div></div>
+<div id="ret" class="hide"><div id="retl"></div></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('checklist');
+const G=[['Запрос',['Метод и путь соответствуют документации','Обязательные заголовки переданы (Content-Type, Authorization)','Тело соответствует формату (JSON или XML)']],
+['Позитивные сценарии',['Минимальное допустимое значение принимается','Максимальное допустимое значение принимается','Повторный запрос обрабатывается по правилам (идемпотентность, накопление)']],
+['Негативные сценарии',['Отсутствие обязательного параметра → 4xx','null, пустое значение, неверный тип → 4xx','Значение за границами диапазона → 4xx','Спецсимволы и очень большие числа → 4xx без 500','Неверный метод → 405, неверный путь → 404']],
+['Авторизация',['Без токена → 401','С неверным токеном → 401 или 403']],
+['Ответ',['Код ответа соответствует контракту','Формат тела корректен, Content-Type ответа верный','Ошибка содержит code и понятное message','В ошибке нет технических деталей (стек, SQL, XML-парсер)']],
+['Состояние данных',['После создания и изменения данные записаны','После удаления ресурс недоступен (404)']]];
+const KEY='api-tester-v1';let S=JSON.parse(localStorage.getItem(KEY)||'{}');let n=0;
+$('#items').innerHTML=G.map(([h,a])=>'<div class="card"><b>'+h+'</b>'+a.map(t=>{const id='c'+(n++);return '<label class="it '+(S[id]?'done':'')+'"><input type="checkbox" id="'+id+'" '+(S[id]?'checked':'')+'><span class="t">'+t+'</span></label>'}).join('')+'</div>').join('');
+function paint(){const b=$$('#items input');let d=0;b.forEach(x=>{x.checked=!!S[x.id];x.parentElement.classList.toggle('done',x.checked);d+=x.checked});$('#pb').style.width=100*d/b.length+'%';$('#cnt').textContent=d+' / '+b.length}
+$('#items').onchange=e=>{S[e.target.id]=e.target.checked;localStorage.setItem(KEY,JSON.stringify(S));paint()};$('#rs').onclick=()=>{S={};localStorage.removeItem(KEY);paint()};
+$('#cp').onclick=()=>copy($$('#items .card').map(c=>'### '+c.querySelector('b').textContent+'\n'+$$('label',c).map(l=>'- ['+(l.querySelector('input').checked?'x':' ')+'] '+l.textContent.trim()).join('\n')).join('\n\n'));
+$('#oracle').innerHTML='<div class="card"><table><tr><th>Код</th><th>Когда</th><th>Пример из проекта</th></tr>'+[[200,'запрос корректен и выполнен','продукт добавлен в набор'],[201,'ресурс создан','набор создан'],[400,'запрос нарушает контракт','quantity = −1, пустой productsList'],[401,'нет авторизации','просмотр корзины без токена'],[404,'ресурс или путь не найден','корзина с несуществующим id'],[405,'метод не разрешён','GET на метод расчёта доставки'],[409,'корректный запрос не совместим с состоянием','нет нужного количества на складе'],[500,'сбой сервера — это всегда дефект для клиентского запроса','необработанный XML или тип данных']].map(r=>'<tr><td>'+sp(r[0])+'</td><td>'+r[1]+'</td><td class="mut">'+r[2]+'</td></tr>').join('')+'</table></div>';
+const T=(t)=>$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))||['list','oracle','gen','ret'].forEach(id=>$('#'+id).classList.toggle('hide',id!==t));
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(b)T(b.dataset.t)};
+let gen=[];
+$('#go').onclick=()=>{const nm=$('#pn').value.trim()||'param',t=$('#pt').value,mn=$('#mn').value===''?null:+$('#mn').value,mx=$('#mx').value===''?null:+$('#mx').value;const c=[];
+ c.push(['параметр отсутствует','400']);c.push(['null','400']);
+ if(t=='int'||t=='num'){if(mn!=null){c.push([String(mn-1)+' (меньше min)','400']);c.push([String(mn)+' (min)','200'])}if(mx!=null){c.push([String(mx)+' (max)','200']);c.push([String(mx+1)+' (больше max)','400'])}c.push(['0','зависит от допустимого диапазона']);c.push(['-1','400']);c.push(['"abc" (строка вместо числа)','400']);c.push(['"%" (спецсимвол)','400']);c.push(['2147483648 (больше int)','400']);if(t=='num')c.push(['0.5 / 2.55 (дробные значения)','зависит от точности'])}
+ if(t=='str'){c.push(['пустая строка','400']);c.push(['только пробелы','400']);if(mn!=null)c.push(['длина '+(mn-1),'400']);if(mn!=null)c.push(['длина '+mn,'200']);if(mx!=null){c.push(['длина '+mx,'200']);c.push(['длина '+(mx+1),'400'])}c.push(['спецсимволы (% # &)','400']);c.push(['<, > (ломают XML)','400']);c.push(['число вместо строки','400'])}
+ if(t=='arr'){c.push(['[] (пустой массив)','400']);c.push(['1 элемент','200']);if(mx!=null){c.push([mx+' элементов (max)','200']);c.push([(mx+1)+' элемент (больше max)','400'])}c.push(['число вместо массива','400']);c.push(['элемент неверного типа','400'])}
+ gen=c.map(x=>[nm+': '+x[0],x[1]]);$('#gout').innerHTML='<table><tr><th>№</th><th>Тест</th><th>Ожидаемый код</th></tr>'+gen.map((g,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(g[0])+'</td><td>'+(/^\d+$/.test(g[1])?sp(g[1]):esc(g[1]))+'</td></tr>').join('')+'</table>';$('#gcp').classList.remove('hide')};
+$('#gcp').onclick=()=>copy('| № | Тест | Ожидаемый код |\n|---|---|---|\n'+gen.map((g,i)=>'| '+(i+1)+' | '+g[0]+' | '+g[1]+' |').join('\n'));
+const RET=['Получена сборка с исправлениями, зафиксирована версия API','В окружении Postman заполнены baseUrl и token','Выполнена папка «00 Подготовка»','Запущены папки коллекции: наборы, доставка, корзина','Каждый упавший запрос проверен по коду и формату ответа','Исправленные дефекты закрыты, остальные переоткрыты','Позитивные сценарии прогнаны повторно','Закрыты серые зоны высокого риска','Метрики и отчёт обновлены'];let RS=JSON.parse(localStorage.getItem('api-retest-v1')||'{}');
+$('#retl').innerHTML='<div class="card">'+RET.map((t,i)=>'<label class="it '+(RS[i]?'done':'')+'"><input type="checkbox" data-r="'+i+'" '+(RS[i]?'checked':'')+'><span class="t">'+t+'</span></label>').join('')+'</div>';
+$('#retl').onchange=e=>{RS[e.target.dataset.r]=e.target.checked;localStorage.setItem('api-retest-v1',JSON.stringify(RS));e.target.parentElement.classList.toggle('done',e.target.checked)};
+paint();
+</script></body></html>

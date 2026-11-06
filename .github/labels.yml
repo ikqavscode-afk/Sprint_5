@@ -1,0 +1,15 @@
+# name | color | description
+- {name: "bug", color: "D73A4A", description: "Дефект API"}
+- {name: "class: validation-missing", color: "D93F0B", description: "Сервер принял невалидный запрос (200 вместо 4xx)"}
+- {name: "class: unhandled-500", color: "B60205", description: "Необработанная ошибка: 500 вместо 400"}
+- {name: "class: incomplete-response", color: "FBCA04", description: "Неполное тело ответа"}
+- {name: "class: wrong-status", color: "C5DEF5", description: "Неверный код ответа"}
+- {name: "severity: high", color: "B60205", description: "Высокая серьёзность"}
+- {name: "severity: medium", color: "FBCA04", description: "Средняя серьёзность"}
+- {name: "severity: low", color: "0E8A16", description: "Низкая серьёзность"}
+- {name: "area: kits", color: "1D76DB", description: "Наборы"}
+- {name: "area: delivery", color: "5319E7", description: "Доставка «Привезём быстро»"}
+- {name: "area: orders-put", color: "006B75", description: "Корзина: PUT"}
+- {name: "area: orders-get", color: "006B75", description: "Корзина: GET"}
+- {name: "area: orders-delete", color: "006B75", description: "Корзина: DELETE"}
+- {name: "status: open", color: "EDEDED", description: "Дефект открыт"}

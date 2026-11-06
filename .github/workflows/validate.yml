@@ -1,0 +1,20 @@
+name: Validate data
+
+# Проверяет, что JSON-данные корректны, а сгенерированные документы и коллекция Postman актуальны.
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JSON is valid
+        run: |
+          for f in data/*.json postman/*.json; do python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$f"; done
+      - name: Generated files are up to date
+        run: |
+          python3 scripts/build_postman.py
+          python3 scripts/build_docs.py
+          git diff --exit-code

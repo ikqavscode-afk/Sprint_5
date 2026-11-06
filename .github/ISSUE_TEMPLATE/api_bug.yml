@@ -1,0 +1,35 @@
+name: 🐞 Дефект API
+description: Оформить дефект метода API
+title: "[ID] METHOD /path: класс дефекта"
+labels: ["bug", "status: open"]
+body:
+  - type: input
+    id: request
+    attributes: {label: Запрос, placeholder: "PUT /api/v1/orders/{id}"}
+    validations: {required: true}
+  - type: dropdown
+    id: cls
+    attributes:
+      label: Класс дефекта
+      options: ["200 вместо 4xx", "500 вместо 400", "Неполное тело ответа", "Неверный код ответа"]
+    validations: {required: true}
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Серьёзность
+      options: [High, Medium, Low]
+    validations: {required: true}
+  - type: textarea
+    id: body
+    attributes: {label: Тело запроса, render: json}
+  - type: textarea
+    id: expected
+    attributes: {label: Ожидаемый код и тело ответа}
+    validations: {required: true}
+  - type: textarea
+    id: actual
+    attributes: {label: Фактический код и тело ответа}
+    validations: {required: true}
+  - type: input
+    id: env
+    attributes: {label: Окружение, placeholder: "Postman 12, API v3.1.1"}

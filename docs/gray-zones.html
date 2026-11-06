@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Серые зоны</title></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Серые зоны требований</h1><p class="lead">Неполные или противоречивые места требований: что неясно, вопрос аналитику и допущение, принятое при тестировании.</p>
+<div class="row"><select id="risk"><option value="">Любой риск</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select><button class="p" id="cp">Скопировать вопросы</button></div><div id="list"></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('gray-zones');let G=[];
+function draw(){const r=G.filter(g=>!$('#risk').value||g.risk==$('#risk').value);
+ $('#list').innerHTML=r.map(g=>'<div class="card"><span class="tag '+g.risk+'">'+g.risk+'</span> <b class="mono">'+g.id+'</b> · '+esc(g.topic)+'<p><b>Что неясно:</b> '+esc(g.unclear)+'</p><p><b>Вопрос:</b> '+esc(g.question)+'</p><p><b>Допущение:</b> '+esc(g.assumption)+'</p><p class="mut" style="margin:0">Баги: '+(g.bugs.map(b=>'<a href="bugs.html#'+encodeURIComponent(b)+'">'+esc(b)+'</a>').join(', ')||'—')+'</p></div>').join('')}
+load('api-gray-zones.json').then(d=>{G=d;$('#risk').addEventListener('input',draw);draw();$('#cp').onclick=()=>copy(G.map((g,i)=>(i+1)+'. ['+g.topic+'] '+g.question).join('\n'))});
+</script></body></html>

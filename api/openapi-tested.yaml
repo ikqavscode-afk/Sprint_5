@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: Яндекс Прилавок — проверенные методы API
+  version: 3.1.1
+  description: >
+    Фрагмент контракта, восстановленный из требований и ожидаемых результатов проверок.
+    В полях x-observed описано фактическое поведение, отличающееся от контракта.
+servers:
+  - url: "{baseUrl}"
+    variables:
+      baseUrl:
+        default: https://example.invalid
+paths:
+  /api/v1/kits/{id}/products:
+    post:
+      summary: Добавить продукты в набор
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: integer}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productsList]
+              properties:
+                productsList:
+                  type: array
+                  minItems: 1
+                  maxItems: 30
+                  items:
+                    type: object
+                    required: [id, quantity]
+                    properties:
+                      id: {type: integer, minimum: 1, maximum: 2147483647}
+                      quantity: {type: integer, minimum: 1, maximum: 2147483647}
+      responses:
+        "200": {description: Продукты добавлены}
+        "400": {description: Некорректный запрос, content: {application/json: {schema: {$ref: "#/components/schemas/Error"}}}}
+      x-observed:
+        - {bugs: [Б1, Б2, Б3, Б4, "Б1-1", "Б1-3", "Б1-4"], returns: 200, expected: 400}
+        - {bugs: [Б5, Б6, Б7, "Б1-2", "Б1-5"], returns: "500 (HTML)", expected: 400}
+  /fast-delivery/v3.1.1/calculate-delivery.xml:
+    post:
+      summary: Возможность и стоимость доставки «Привезём быстро»
+      description: Работает с 07 до 21. 0–7 шт и до 2,5 кг — 23 ₽; 8–14 шт и 2,6–6 кг — 43 ₽; срок 25–30 мин.
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              type: object
+              required: [productsCount, productsWeight, deliveryTime]
+              properties:
+                productsCount: {type: integer, minimum: 1}
+                productsWeight: {type: number, minimum: 0.1}
+                deliveryTime: {type: integer, minimum: 0, maximum: 23}
+      responses:
+        "200": {description: Ответ службы, content: {application/xml: {schema: {type: string}}}}
+        "400": {description: Некорректный запрос}
+      x-observed:
+        - {bugs: [Б8, Б9, "Б1-6"], returns: "200 с неполным телом", expected: "isItPossibleToDeliver=false"}
+        - {bugs: [Б10, Б11, Б12, Б13, Б17, Б18, Б19, Б20, Б22, "Б1-7", "Б1-8"], returns: 200, expected: 400}
+        - {bugs: [Б14, Б15, Б16, Б21], returns: 500, expected: 400}
+  /api/v1/orders/{id}:
+    get:
+      summary: Продукты в корзине
+      security: [{bearer: []}]
+      responses:
+        "200": {description: Список продуктов}
+        "401": {description: Нет авторизации}
+        "404": {description: Корзина не найдена}
+      x-observed:
+        - {bugs: [Б23], returns: 200, expected: 401}
+    put:
+      summary: Добавить продукты в корзину
+      security: [{bearer: []}]
+      responses:
+        "200": {description: Продукты добавлены}
+        "400": {description: Некорректный запрос}
+        "409": {description: Нет нужного количества на складе}
+      x-observed:
+        - {bugs: [Б26, Б27, Б28, "Б1-9", "Б1-12", "Б1-14", "Б1-1-2", "Б1-1-4"], returns: 200, expected: 400}
+        - {bugs: ["Б1-11", "Б1-13", "Б1-1-1", "Б1-1-3"], returns: 500, expected: 400}
+        - {bugs: ["Б1-10"], returns: 405, expected: 404}
+    delete:
+      summary: Удалить корзину
+      security: [{bearer: []}]
+      responses:
+        "200": {description: Корзина удалена}
+        "404": {description: Корзина не найдена}
+      x-observed:
+        - {bugs: [Б29], returns: 404, expected: 200}
+components:
+  securitySchemes:
+    bearer: {type: http, scheme: bearer}
+  schemas:
+    Error:
+      type: object
+      properties:
+        code: {type: integer}
+        message: {type: string}

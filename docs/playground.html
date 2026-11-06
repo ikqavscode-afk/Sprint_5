@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Песочница контракта</title></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Песочница контракта</h1>
+<p class="lead">Оракул отвечает так, как должен отвечать API по требованиям и ожидаемым результатам проверок. Если запрос нарушает правило, показано, какой дефект известен и что вернул настоящий сервер.</p>
+<div class="row"><select id="ep"><option value="kits">POST /api/v1/kits/{id}/products</option><option value="orders">PUT /api/v1/orders/{id}</option><option value="delivery">POST /fast-delivery/v3.1.1/calculate-delivery.xml</option></select><select id="pre"></select>
+<label class="mut"><input type="checkbox" id="tok" checked> токен</label><label class="mut"><input type="checkbox" id="cid" checked> id в пути</label><label class="mut"><input type="checkbox" id="cty" checked> Content-Type</label></div>
+<textarea id="body" spellcheck="false"></textarea>
+<div class="row"><button class="p" id="send">▶ Отправить в оракул</button><span class="mut" id="hint"></span></div>
+<div id="out"></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('playground');let BUG={};
+const MSG='Не все необходимые параметры были переданы',INT=2147483647;
+const P={kits:[['Валидный: 1 продукт','{"productsList":[{"id":1,"quantity":1}]}'],['Несуществующий id 555','{"productsList":[{"id":555,"quantity":1}]}'],['quantity = 0','{"productsList":[{"id":1,"quantity":0}]}'],['quantity = -1','{"productsList":[{"id":1,"quantity":-1}]}'],['quantity = null','{"productsList":[{"id":1,"quantity":null}]}'],['id = 0','{"productsList":[{"id":0,"quantity":1}]}'],['Пустой productsList','{"productsList":[]}'],['Нет productsList','{}'],['quantity вне int','{"productsList":[{"id":1,"quantity":99999999999}]}']],
+orders:[['Валидный: добавить продукт','{"productsList":[{"id":1,"quantity":2}]}'],['quantity = -1','{"productsList":[{"id":1,"quantity":-1}]}'],['quantity = 0','{"productsList":[{"id":1,"quantity":0}]}'],['quantity = "abc"','{"productsList":[{"id":1,"quantity":"abc"}]}'],['id = "abc"','{"productsList":[{"id":"abc","quantity":1}]}'],['Нет quantity','{"productsList":[{"id":1}]}'],['Пустое тело {}','{}'],['Пустой productsList','{"productsList":[]}'],['productsList — число','{"productsList":123}']],
+delivery:[['Валидный: 1 шт, 0,1 кг, 07:00','<InputModel>\n  <productsCount>1</productsCount>\n  <productsWeight>0.1</productsWeight>\n  <deliveryTime>07</deliveryTime>\n</InputModel>'],['Время 06 (вне графика)','<InputModel>\n  <productsCount>10</productsCount>\n  <productsWeight>4</productsWeight>\n  <deliveryTime>06</deliveryTime>\n</InputModel>'],['Количество 0, вес 0','<InputModel>\n  <productsCount>0</productsCount>\n  <productsWeight>0</productsWeight>\n  <deliveryTime>10</deliveryTime>\n</InputModel>'],['Время = text','<InputModel>\n  <productsCount>5</productsCount>\n  <productsWeight>5</productsWeight>\n  <deliveryTime>text</deliveryTime>\n</InputModel>'],['Нет productsCount','<InputModel>\n  <productsWeight>3</productsWeight>\n  <deliveryTime>10</deliveryTime>\n</InputModel>'],['Вес = null','<InputModel>\n  <productsCount>8</productsCount>\n  <productsWeight>null</productsWeight>\n  <deliveryTime>10</deliveryTime>\n</InputModel>'],['Незакрытый тег','<InputModel>\n  <productsCount>3</productsCount>\n  <productsWeight>3</productsWeight>\n  <deliveryTime>20</deliveryTime>'],['15 шт, 2 кг','<InputModel>\n  <productsCount>15</productsCount>\n  <productsWeight>2.0</productsWeight>\n  <deliveryTime>11</deliveryTime>\n</InputModel>']]};
+const R=(ok,text,bugs)=>({ok,text,bugs:bugs||[]});
+function listRules(body,orders){const rules=[];let j;
+ if(body.trim().startsWith('<'))return{fatal:R(false,'Тело не JSON (XML вместо JSON)',[])};
+ try{j=JSON.parse(body)}catch(e){return{fatal:R(false,'Невалидный JSON',[])}}
+ const pl=j&&j.productsList;
+ if(pl===undefined){return{fatal:R(false,'Нет параметра productsList',orders?['Б28']:['Б6'])}}
+ if(!Array.isArray(pl))return{fatal:R(false,'productsList должен быть массивом',orders?['Б1-11']:[])};
+ if(pl.length===0)return{fatal:R(false,'productsList пустой',orders?['Б1-9']:['Б5'])};
+ if(!orders&&pl.length>30)return{fatal:R(false,'Не более 30 продуктов в наборе',[]),msg:'Не более 30 продуктов в наборе'};
+ const isInt=v=>typeof v==='number'&&Number.isInteger(v);
+ for(const it of pl){
+  if(!('id' in it)){rules.push(orders?R(false,'Нет id продукта',[]):R(false,'Нет id продукта',[]));rules.code=orders?409:400}
+  else if(it.id===null)rules.push(R(false,'id = null',orders?[]:['Б1-4']));
+  else if(typeof it.id==='string')rules.push(R(false,'id — строка',orders?(/^[A-Za-z]+$/.test(it.id)?['Б1-1-3']:['Б1-1-1']):[]));
+  else if(isInt(it.id)&&it.id>INT)rules.push(R(false,'id больше int',orders?['Б1-13']:['Б1-2']));
+  else if(isInt(it.id)&&it.id<0)rules.push(R(false,'id отрицательный',orders?[]:['Б1-1']));
+  else if(it.id===0){rules.push(R(false,'id = 0',orders?[]:['Б1-3']));if(orders)rules.code=409}
+  else if(!orders&&it.id===555)rules.push(R(false,'Продукт с таким id не существует (проверка №10)',['Б1']));
+  else rules.push(R(true,'id продукта корректен'));
+  if(!('quantity' in it))rules.push(R(false,'Нет quantity',orders?['Б27','Б1-12']:[]));
+  else if(it.quantity===null)rules.push(R(false,'quantity = null',orders?[]:['Б4']));
+  else if(typeof it.quantity==='string')rules.push(R(false,'quantity — строка',orders?(/^[A-Za-z]+$/.test(it.quantity)?['Б1-1-4']:['Б1-1-2']):[]));
+  else if(isInt(it.quantity)&&it.quantity>INT){rules.push(R(false,'quantity больше int',orders?[]:['Б1-5']));if(orders)rules.code=409}
+  else if(it.quantity===0)rules.push(R(false,'quantity = 0',orders?['Б1-14']:['Б2']));
+  else if(isInt(it.quantity)&&it.quantity<0)rules.push(R(false,'quantity отрицательное',orders?['Б26']:['Б3']));
+  else rules.push(R(true,'quantity корректно'));}
+ return{rules};}
+function evalJson(body,orders,o){
+ if(orders&&!o.tok)return{status:401,body:'{"code":401,"message":"Требуется авторизация"}',rules:[R(false,'Нет токена авторизации',['Б23'])]};
+ if(orders&&!o.cid)return{status:404,body:'{"code":404,"message":"Not Found"}',rules:[R(false,'Нет id корзины в пути: ожидается 404, сервер отвечает 405',['Б1-10'])]};
+ if(!orders&&!o.cty)return{status:400,body:'{"code":400,"message":"'+MSG+'"}',rules:[R(false,'Нет заголовка Content-Type',['Б7'])]};
+ const r=listRules(body,orders);
+ if(r.fatal)return{status:400,body:'{"code":400,"message":"'+(r.msg||MSG)+'"}',rules:[r.fatal]};
+ const bad=r.rules.some(x=>!x.ok);
+ const code=bad?(r.rules.code||400):200;
+ return{status:code,body:bad?'{"code":'+code+',"message":"'+(code==409?'Нет нужного количества на складе':MSG)+'"}':(orders?'{ "id": 2, "productsList": [ … ] }':'{ "id": 7, "name": "Kit", "productsList": [ … ] }'),rules:r.rules};}
+function evalXml(body){
+ const bad400=(rules)=>({status:400,body:'{"code":400,"message":"'+MSG+'"}',rules});
+ const doc=new DOMParser().parseFromString(body,'application/xml');
+ if(doc.querySelector('parsererror'))return bad400([R(false,'XML не разобран (незакрытый тег или спецсимвол)',['Б16','Б21'])]);
+ const g=n=>{const e=doc.querySelector(n);return e?e.textContent.trim():undefined};
+ const c=g('productsCount'),w=g('productsWeight'),t=g('deliveryTime'),rules=[];
+ const num=(v,int)=>int?/^-?\d+$/.test(v):/^-?\d+(\.\d+)?$/.test(v);
+ const big=v=>v.replace(/[-.]/g,'').length>15;
+ if(c===undefined)rules.push(R(false,'Нет productsCount',['Б14']));
+ else if(c==='null')rules.push(R(false,'productsCount = null',['Б19']));
+ else if(!num(c,true))rules.push(R(false,'productsCount не число',/^[A-Za-z]+$/.test(c)?['Б17']:['Б20']));
+ else if(big(c))rules.push(R(false,'productsCount слишком большое',['Б1-7']));
+ else if(+c<0)rules.push(R(false,'productsCount отрицательное',['Б11']));
+ else if(+c===0)rules.push(R(false,'productsCount = 0 (допустимость нуля — GZ1)',['Б10']));
+ else rules.push(R(true,'productsCount корректно'));
+ if(w===undefined)rules.push(R(false,'Нет productsWeight',['Б15']));
+ else if(w==='null')rules.push(R(false,'productsWeight = null',['Б18']));
+ else if(!num(w,false))rules.push(R(false,'productsWeight не число',/^[A-Za-z]+$/.test(w)?['Б17']:['Б20']));
+ else if(big(w))rules.push(R(false,'productsWeight слишком большое',['Б1-8']));
+ else if(+w<0)rules.push(R(false,'productsWeight отрицательное',['Б11']));
+ else if(+w===0)rules.push(R(false,'productsWeight = 0 (GZ1)',['Б10']));
+ else rules.push(R(true,'productsWeight корректно'));
+ let hour=null;
+ if(t===undefined)rules.push(R(false,'Нет deliveryTime',[]));
+ else if(!num(t,true))rules.push(R(false,'deliveryTime не число',/^[A-Za-z]+$/.test(t)?['Б13']:['Б22']));
+ else if(big(t))rules.push(R(false,'deliveryTime слишком большое',['Б1-6']));
+ else if(+t<0||+t>23)rules.push(R(false,'deliveryTime вне 0–23',+t<0?['Б12']:[]));
+ else{hour=+t;rules.push(R(true,'deliveryTime корректно'))}
+ if(rules.some(x=>!x.ok))return bad400(rules);
+ if(hour<7||hour>21){rules.push(R(false,'Время вне графика службы (07–21): ожидается isItPossibleToDeliver="false" с полным телом',hour<7?['Б8']:['Б9']));return{status:200,body:'<response name="Привезём быстро" isItPossibleToDeliver="false"></response>',rules}}
+ const cnt=+c,wt=+w;let host,client;
+ if(cnt<=7&&wt<=2.5){host=23;client=0}else if(cnt<=14&&wt<=6){host=43;client=0}else if(wt<=6){host=43;client=99}else return{status:200,body:'(не определено требованиями — серая зона GZ4)',rules};
+ return{status:200,body:'<response name="Привезём быстро" isItPossibleToDeliver="true" hostDeliveryCost="'+host+'" clientDeliveryCost="'+client+'">\n  <toBeDeliveredTime><min>25</min><max>30</max></toBeDeliveredTime>\n</response>',rules};}
+function fill(){const k=$('#ep').value;$('#pre').innerHTML=P[k].map((p,i)=>'<option value="'+i+'">'+esc(p[0])+'</option>').join('');$('#body').value=P[k][0][1];$('#tok').parentElement.style.display=k=='orders'?'':'none';$('#cid').parentElement.style.display=k=='orders'?'':'none';$('#cty').parentElement.style.display=k=='kits'?'':'none';$('#out').innerHTML='';
+ $('#hint').textContent=k=='delivery'?'Формат тела — XML':'Формат тела — JSON'}
+function run(){const k=$('#ep').value,b=$('#body').value,o={tok:$('#tok').checked,cid:$('#cid').checked,cty:$('#cty').checked};
+ const r=k=='delivery'?evalXml(b):evalJson(b,k=='orders',o);
+ const viol=r.rules.filter(x=>!x.ok);
+ $('#out').innerHTML='<div class="term"><div class="bar"><i></i><i></i><i></i><span>ответ оракула</span></div><div class="body"><p style="margin:0 0 8px">'+sp(r.status)+' <span class="mut">по требованиям</span></p><pre>'+esc(r.body)+'</pre></div></div>'+
+ '<div class="card"><b>Проверка правил</b>'+r.rules.map(x=>'<div style="padding:4px 0">'+(x.ok?'<span style="color:var(--ok)">✓</span> ':'<span style="color:var(--bad)">✗</span> ')+esc(x.text)+(x.bugs.length?' — известный дефект: '+x.bugs.map(id=>{const b=BUG[id];return '<a class="tag" href="bugs.html#'+encodeURIComponent(id)+'">'+esc(id)+'</a>'+(b?' <span class="mut">сервер вернул</span> '+sp(b.actual_status):'')}).join(' '):'')+'</div>').join('')+
+ (viol.some(x=>x.bugs.length)?'<p class="mut" style="margin:10px 0 0;font-size:13px">Это воспроизводит дефект: настоящий сервер отвечает не так, как оракул.</p>':'')+'</div>'}
+load('api-bugs.json').then(d=>{d.forEach(b=>BUG[b.id]=b);fill();$('#ep').onchange=fill;$('#pre').onchange=()=>{$('#body').value=P[$('#ep').value][$('#pre').value][1]};$('#send').onclick=run});
+</script></body></html>

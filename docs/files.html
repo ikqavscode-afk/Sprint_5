@@ -1,0 +1,14 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Файлы: Postman и OpenAPI</title></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Файлы</h1><p class="lead">Артефакты, которые можно использовать повторно.</p>
+<div class="grid g2">
+<div class="card"><b>Коллекция Postman</b><p class="mut">45 запросов: по одному на дефект, с проверками ожидаемого поведения. Перед запуском заполните baseUrl и token.</p><a class="tag" href="files/prilavok-api-regression.postman_collection.json" download>⇩ prilavok-api-regression.postman_collection.json</a></div>
+<div class="card"><b>Шаблон окружения Postman</b><p class="mut">Переменные baseUrl и token (без значений).</p><a class="tag" href="files/environment.template.json" download>⇩ environment.template.json</a></div>
+<div class="card"><b>OpenAPI (проверенные методы)</b><p class="mut">Контракт, восстановленный из требований, с описанием наблюдаемых отклонений.</p><a class="tag" href="files/openapi-tested.yaml" download>⇩ openapi-tested.yaml</a></div>
+<div class="card"><b>Данные в JSON</b><p class="mut">Проверки, дефекты, серые зоны, методы.</p><a class="tag" href="data/api-checks.json">api-checks.json</a> <a class="tag" href="data/api-bugs.json">api-bugs.json</a> <a class="tag" href="data/api-gray-zones.json">api-gray-zones.json</a></div></div>
+<h2>Как запустить коллекцию</h2><div class="card"><ol><li>Импортируйте коллекцию и окружение в Postman.</li><li>В окружении заполните <code>baseUrl</code> и <code>token</code>.</li><li>Выполните папку «00 Подготовка», затем остальные через Collection Runner.</li><li>До исправлений запросы показывают дефекты, после исправлений все проверки должны проходить.</li></ol></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('files');
+</script></body></html>

@@ -1,0 +1,58 @@
+[
+ {
+  "key": "kits-create",
+  "method": "POST",
+  "path": "/api/v1/kits",
+  "title": "Создание набора",
+  "area": "kits",
+  "spec": "Создаёт набор внутри карточки: cardId, name (2–15 символов: русские и английские буквы, пробел, тире)."
+ },
+ {
+  "key": "kits-delete",
+  "method": "DELETE",
+  "path": "/api/v1/kits/{id}",
+  "title": "Удаление набора",
+  "area": "kits",
+  "spec": "Удаляет набор из карточки."
+ },
+ {
+  "key": "kits-products",
+  "method": "POST",
+  "path": "/api/v1/kits/{id}/products",
+  "title": "Добавление продуктов в набор",
+  "area": "kits",
+  "spec": "Принимает productsList: массив {id, quantity}. В наборе не более 30 продуктов. Повторное добавление увеличивает количество."
+ },
+ {
+  "key": "delivery-fast",
+  "method": "POST",
+  "path": "/fast-delivery/v3.1.1/calculate-delivery.xml",
+  "title": "Доставка «Привезём быстро» (XML)",
+  "area": "delivery",
+  "spec": "Принимает InputModel: productsCount, productsWeight, deliveryTime. Работает 07–21. 0–7 шт и до 2,5 кг — 23 ₽; 8–14 шт и 2,6–6 кг — 43 ₽; срок 25–30 мин."
+ },
+ {
+  "key": "orders-get",
+  "method": "GET",
+  "path": "/api/v1/orders/{id}",
+  "title": "Список продуктов в корзине",
+  "area": "orders-get",
+  "spec": "Возвращает продукты корзины для авторизованного пользователя; несуществующая корзина — 404."
+ },
+ {
+  "key": "orders-put",
+  "method": "PUT",
+  "path": "/api/v1/orders/{id}",
+  "title": "Добавление продуктов в корзину",
+  "area": "orders-put",
+  "spec": "Добавляет продукты в корзину при наличии на складе. Повторное добавление увеличивает количество."
+ },
+ {
+  "key": "orders-delete",
+  "method": "DELETE",
+  "path": "/api/v1/orders/{id}",
+  "title": "Удаление корзины",
+  "area": "orders-delete",
+  "spec": "Удаляет существующую корзину; несуществующая — 404."
+ }
+]

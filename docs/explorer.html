@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Чек-лист API</title></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Чек-лист API</h1><p class="lead">Проверки по методам с запросом, ожидаемым ответом и результатом. Отмечайте выполненные — прогресс сохраняется в браузере.</p>
+<div class="row"><input type="search" id="q" placeholder="Поиск по проверкам  ( / )" style="flex:1;min-width:200px"><select id="st"><option value="">Все статусы</option><option>Passed</option><option>Failed</option><option>Skipped</option></select><select id="gr"><option value="">Positive и Negative</option><option>Positive</option><option>Negative</option></select><button id="rs">Сбросить отметки</button></div>
+<div class="prog"><i id="pb"></i></div><div class="mut" id="cnt" style="margin:6px 0 10px"></div>
+<div id="eps" class="tabs"></div><div id="list"></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('explorer');
+const KEY='api-explorer-v1';let S=JSON.parse(localStorage.getItem(KEY)||'{}'),C=[],cur='';
+const head=s=>{const m=s.match(/\b(POST|GET|PUT|DELETE)\b/);return m?m[1]:''};
+const lab=s=>s.replace(/\b(POST|GET|PUT|DELETE)\b.*$/,'').trim()||s;
+function draw(){const q=$('#q').value.toLowerCase(),st=$('#st').value,gr=$('#gr').value;
+ const r=C.filter(c=>(!cur||c.endpoint==cur)&&(!st||c.status==st)&&(!gr||c.group==gr)&&(!q||(c.title+c.request+c.id).toLowerCase().includes(q)));
+ const done=C.filter(c=>S[c.id]).length;$('#pb').style.width=100*done/C.length+'%';$('#cnt').textContent='Отмечено '+done+' из '+C.length+' · показано '+r.length;
+ $('#list').innerHTML=r.map(c=>'<div class="card"><label class="it '+(S[c.id]?'done':'')+'" style="border:0;padding:0"><input type="checkbox" data-i="'+c.id+'" '+(S[c.id]?'checked':'')+'><span class="t sp1"><b class="mono">#'+c.n+'</b> '+esc(c.title)+' <span class="tag">'+esc(c.group||'')+'</span></span><span class="st '+c.status+'">'+c.status+'</span></label>'+
+  '<details style="margin-top:8px"><summary class="mut">запрос и ожидаемый ответ</summary><div class="diff" style="margin-top:8px"><div><h4>ЗАПРОС</h4><pre>'+esc(c.request)+'</pre></div><div><h4>ОЖИДАЕТСЯ</h4><pre class="e">'+esc(c.expected)+'</pre></div></div></details>'+
+  (c.bugs.length?'<div style="margin-top:8px">'+c.bugs.map(b=>'<a class="tag" href="bugs.html#'+encodeURIComponent(b)+'">'+esc(b)+'</a>').join(' ')+'</div>':'')+'</div>').join('')}
+load('api-checks.json').then(d=>{C=d;const eps=[...new Set(d.map(c=>c.endpoint))];
+ $('#eps').innerHTML='<button class="on" data-e="">Все методы</button>'+eps.map((e,i)=>'<button data-e="'+esc(e)+'">'+mb(head(e))+' '+esc(lab(e).slice(0,48))+' <span class="mut">('+d.filter(c=>c.endpoint==e).length+')</span></button>').join('');
+ $('#eps').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;cur=b.dataset.e;$$('#eps button').forEach(x=>x.classList.toggle('on',x===b));draw()};
+ ['q','st','gr'].forEach(i=>$('#'+i).addEventListener('input',draw));
+ $('#list').addEventListener('change',e=>{S[e.target.dataset.i]=e.target.checked;localStorage.setItem(KEY,JSON.stringify(S));draw()});
+ $('#rs').onclick=()=>{S={};localStorage.removeItem(KEY);draw()};draw()});
+</script></body></html>
