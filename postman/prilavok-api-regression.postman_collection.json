@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Яндекс Прилавок API — регрессия дефектов",
+    "name": "Прилавок API — регрессия дефектов",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": "Каждый запрос воспроизводит дефект и проверяет ожидаемое поведение по требованиям. Перед запуском заполните baseUrl и token в окружении."
   },

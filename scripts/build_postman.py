@@ -60,7 +60,7 @@ setup = {"name": "00 Подготовка (для корзины)", "item": [
      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Корзина создана', function () { pm.response.to.have.status(200); });", "pm.collectionVariables.set('orderId', pm.response.json().id);"]}}]},
 ]}
 coll = {
-    "info": {"name": "Яндекс Прилавок API — регрессия дефектов", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "info": {"name": "Прилавок API — регрессия дефектов", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
              "description": "Каждый запрос воспроизводит дефект и проверяет ожидаемое поведение по требованиям. Перед запуском заполните baseUrl и token в окружении."},
     "variable": [{"key": "kitId", "value": "7"}, {"key": "orderId", "value": ""}],
     "item": [setup] + [{"name": title, "item": [item(b) for b in bugs if folder_of(b["area"]) == key]} for key, title in FOLDERS],
