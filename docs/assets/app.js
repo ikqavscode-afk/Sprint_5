@@ -6,7 +6,7 @@ const mb=m=>m?`<span class="m ${m}">${m}</span>`:'';
 const sp=c=>c==null?'':`<span class="sp s${String(c)[0]}">${c}</span>`;
 const toast=t=>{let e=$('#toast');if(!e){e=document.createElement('div');e.id='toast';e.className='toast';document.body.appendChild(e)}e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1400)};
 const copy=t=>navigator.clipboard.writeText(t).then(()=>toast('Скопировано'));
-const NAV=[['index.html','◧','Обзор'],['explorer.html','☰','Чек-лист API'],['bugs.html','✖','Реестр дефектов'],['playground.html','▶','Песочница контракта'],['gray-zones.html','◐','Серые зоны'],['learn.html','✎','Шпаргалка и квиз'],['checklist.html','✔','Чек-лист тестировщика'],['files.html','⇩','Файлы: Postman, OpenAPI']];
+const NAV=[['index.html','◧','Обзор'],['explorer.html','☰','Чек-лист API'],['bugs.html','✖','Реестр дефектов'],['playground.html','▶','Песочница контракта'],['gray-zones.html','◐','Серые зоны'],['places.html','⚙','Разбор API: Places'],['learn.html','✎','Шпаргалка и квиз'],['checklist.html','✔','Чек-лист тестировщика'],['files.html','⇩','Файлы: Postman, OpenAPI']];
 function shell(path){
   const cur=location.pathname.split('/').pop()||'index.html';
   $('aside').innerHTML=`<div class="logo">{ <b>api</b> }<small>Прилавок · тестирование</small></div>`+

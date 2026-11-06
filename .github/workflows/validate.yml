@@ -17,4 +17,5 @@ jobs:
         run: |
           python3 scripts/build_postman.py
           python3 scripts/build_docs.py
+          python3 scripts/build_places.py
           git diff --exit-code

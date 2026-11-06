@@ -1,0 +1,2042 @@
+{
+  "info": {
+    "name": "Places API — разбор",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Запускайте папки по порядку: сначала регистрация (создаёт пользователя), затем вход (сохраняет token), затем карточки. Укажите baseUrl в переменных коллекции."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "regEmail",
+      "value": ""
+    },
+    {
+      "key": "regPass",
+      "value": "Qq1@aaaaaa"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Регистрация · POST /api/signup",
+      "item": [
+        {
+          "name": "[PL-001] Валидные email и пароль",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-001: статус 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Есть профиль пользователя\", function () { const d = pm.response.json().data; pm.expect(d).to.have.property(\"_id\"); pm.expect(d).to.have.property(\"email\"); });",
+                  "pm.collectionVariables.set(\"regEmail\", pm.variables.get(\"email\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-002] Email: 4 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(4));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-002: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Почта введена некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Почта введена некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "нижняя граница: форматно невалидна при любой длине Серая зона GZ-P1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-003] Email: 5 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(5));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-003: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-004] Email: 6 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(6));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-004: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-005] Email: 10 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(10));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-005: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-006] Email: 49 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(49));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-006: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-007] Email: 50 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(50));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-007: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-008] Email: 51 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(51));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-008: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Почта введена некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Почта введена некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-009] Email с недопустимыми символами",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-009: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Почта введена некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Почта введена некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"te()st@exam!ple.com\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-010] Пустой email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-010: статус 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P2.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-011] Нет поля email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-011: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Не передан обязательный параметр\", function () { pm.expect(pm.response.json().message).to.eql(\"Не передан обязательный параметр\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-012] Нет поля password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-012: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Не передан обязательный параметр\", function () { pm.expect(pm.response.json().message).to.eql(\"Не передан обязательный параметр\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-013] Пароль: 7 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-013: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Пароль введен некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Пароль введен некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-014] Пароль: 8 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-014: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-015] Пароль: 9 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-015: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-016] Пароль: 19 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-016: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaaaaaaaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-017] Пароль: 20 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-017: статус 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaaaaaaaaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-018] Пароль: 21 симв.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-018: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Пароль введен некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Пароль введен некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1@aaaaaaaaaaaaaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-019] Пустой пароль",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-019: статус 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P2.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-020] Пароль без заглавной буквы",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-020: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Пароль введен некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Пароль введен некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-021] Пароль без строчной буквы",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-021: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Пароль введен некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Пароль введен некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"QQ1@AAAAAA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-022] Пароль без цифры",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-022: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Пароль введен некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Пароль введен некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qqq@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-023] Пароль без спецсимвола",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-023: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Пароль введен некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Пароль введен некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"Qq1aaaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-024] Пароль с кириллицей",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function mk(total){const d='@b.c';const l=Math.max(total-d.length,0);const a='abcdefghijklmnopqrstuvwxyz';let s='';while(s.length<l)s+=a[Math.floor(Math.random()*26)];return s+d}",
+                  "pm.variables.set(\"email\", mk(20));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-024: статус 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "Серая зона GZ-P5.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"QЩ1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-025] Повторная регистрация того же email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-025: статус 409\", function () { pm.response.to.have.status(409); });",
+                  "pm.test(\"Сообщение: Пользователь с таким email уже существует\", function () { pm.expect(pm.response.json().message).to.eql(\"Пользователь с таким email уже существует\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{regEmail}}\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Авторизация · POST /api/signin",
+      "item": [
+        {
+          "name": "[PL-026] Вход с валидными данными (сохраняет token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-026: статус 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Есть token\", function () { pm.expect(pm.response.json().token).to.be.a(\"string\"); });",
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signin"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{regEmail}}\",\n  \"password\": \"{{regPass}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-027] Нет поля email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-027: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Не передан обязательный параметр\", function () { pm.expect(pm.response.json().message).to.eql(\"Не передан обязательный параметр\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signin"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"{{regPass}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-028] Нет поля password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-028: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Не передан обязательный параметр\", function () { pm.expect(pm.response.json().message).to.eql(\"Не передан обязательный параметр\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signin"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{regEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-029] Некорректный формат email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-029: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Почта введена некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Почта введена некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signin"
+            },
+            "description": "Серая зона GZ-P3.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"te()st@exam!ple.com\",\n  \"password\": \"{{regPass}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-030] Неверный пароль существующего пользователя",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-030: статус 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Сообщение: Неправильные почта или пароль\", function () { pm.expect(pm.response.json().message).to.eql(\"Неправильные почта или пароль\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signin"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{regEmail}}\",\n  \"password\": \"Wrong1@aaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-031] Несуществующий пользователь",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-031: статус 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Сообщение: Пользователь не найден\", function () { pm.expect(pm.response.json().message).to.eql(\"Пользователь не найден\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signin"
+            },
+            "description": "Серая зона GZ-P4.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nouser.0000@example.com\",\n  \"password\": \"Qq1@aaaaaa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Карточки · POST /api/cards",
+      "item": [
+        {
+          "name": "[PL-032] Валидные name и link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-032: статус 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Структура карточки\", function () { const d = pm.response.json().data; pm.expect(d).to.include.keys(\"_id\", \"name\", \"link\", \"owner\", \"likes\", \"createdAt\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Смурфленд\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-033] Название: 1 симв.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-033: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Наименование введено некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Наименование введено некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Я\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-034] Название: 2 симв.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-034: статус 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Структура карточки\", function () { const d = pm.response.json().data; pm.expect(d).to.include.keys(\"_id\", \"name\", \"link\", \"owner\", \"likes\", \"createdAt\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Яа\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-035] Название: 3 симв.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-035: статус 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Структура карточки\", function () { const d = pm.response.json().data; pm.expect(d).to.include.keys(\"_id\", \"name\", \"link\", \"owner\", \"likes\", \"createdAt\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Яаа\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-036] Название: 29 симв.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-036: статус 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Структура карточки\", function () { const d = pm.response.json().data; pm.expect(d).to.include.keys(\"_id\", \"name\", \"link\", \"owner\", \"likes\", \"createdAt\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Яаааааааааааааааааааааааааааа\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-037] Название: 30 симв.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-037: статус 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Структура карточки\", function () { const d = pm.response.json().data; pm.expect(d).to.include.keys(\"_id\", \"name\", \"link\", \"owner\", \"likes\", \"createdAt\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Яааааааааааааааааааааааааааааа\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-038] Название: 31 симв.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-038: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Наименование введено некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Наименование введено некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Яаааааааааааааааааааааааааааааа\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-039] Пустое название",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-039: статус 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "Серая зона GZ-P2.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-040] Нет поля name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-040: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Отсутствует наименование\", function () { pm.expect(pm.response.json().message).to.eql(\"Отсутствует наименование\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-041] Нет поля link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-041: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Отсутствует ссылка на изображение\", function () { pm.expect(pm.response.json().message).to.eql(\"Отсутствует ссылка на изображение\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Смурфленд\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-042] Невалидная ссылка",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-042: статус 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Сообщение: Ссылка введена некорректно\", function () { pm.expect(pm.response.json().message).to.eql(\"Ссылка введена некорректно\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "Серая зона GZ-P7.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Смурфленд\",\n  \"link\": \"RandomText\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-043] Пустая ссылка",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-043: статус 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "Серая зона GZ-P2.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Смурфленд\",\n  \"link\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-044] Нет токена авторизации",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-044: статус 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Сообщение: Требуется авторизация\", function () { pm.expect(pm.response.json().message).to.eql(\"Требуется авторизация\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Смурфленд\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-045] Некорректный токен",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-045: статус 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Сообщение: Требуется авторизация\", function () { pm.expect(pm.response.json().message).to.eql(\"Требуется авторизация\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "abc.def.ghi"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cards"
+            },
+            "description": "Серая зона GZ-P8.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Смурфленд\",\n  \"link\": \"https://example.com/image.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Общие проверки",
+      "item": [
+        {
+          "name": "[PL-046] Невалидный JSON в теле",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-046: статус 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"user@example.com\", \"password\": ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "[PL-047] Метод GET вместо POST для регистрации",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-047: статус 405\", function () { pm.response.to.have.status(405); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signup"
+            },
+            "description": "код 405 не описан в документации "
+          }
+        },
+        {
+          "name": "[PL-048] Метод PUT вместо POST для входа",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"PL-048: статус 405\", function () { pm.response.to.have.status(405); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/signin"
+            },
+            "description": "код 405 не описан в документации "
+          }
+        }
+      ]
+    }
+  ]
+}

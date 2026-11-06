@@ -1,0 +1,1375 @@
+{
+  "name": "Places API",
+  "endpoints": [
+    {
+      "id": "signup",
+      "method": "POST",
+      "path": "/api/signup",
+      "title": "Регистрация пользователя",
+      "auth": false,
+      "fields": [
+        {
+          "field": "email",
+          "type": "string",
+          "required": true,
+          "rule": "5–50 символов (вся строка); английские буквы, цифры, «-», «.», «@»"
+        },
+        {
+          "field": "password",
+          "type": "string",
+          "required": true,
+          "rule": "8–20 символов; минимум: заглавная, строчная, цифра, спецсимвол"
+        }
+      ],
+      "success": {
+        "status": 201,
+        "body": "data: _id, email, name, about, avatar"
+      },
+      "errors": [
+        [
+          400,
+          "Не передан обязательный параметр"
+        ],
+        [
+          400,
+          "Почта введена некорректно"
+        ],
+        [
+          400,
+          "Пароль введен некорректно"
+        ],
+        [
+          409,
+          "Пользователь с таким email уже существует"
+        ],
+        [
+          500,
+          "Внутренняя ошибка сервера"
+        ]
+      ]
+    },
+    {
+      "id": "signin",
+      "method": "POST",
+      "path": "/api/signin",
+      "title": "Авторизация пользователя",
+      "auth": false,
+      "fields": [
+        {
+          "field": "email",
+          "type": "string",
+          "required": true,
+          "rule": "почта, указанная при регистрации"
+        },
+        {
+          "field": "password",
+          "type": "string",
+          "required": true,
+          "rule": "пароль пользователя"
+        }
+      ],
+      "success": {
+        "status": 200,
+        "body": "data: _id, email, name, about, avatar; token (JWT)"
+      },
+      "errors": [
+        [
+          400,
+          "Не передан обязательный параметр"
+        ],
+        [
+          400,
+          "Почта введена некорректно"
+        ],
+        [
+          401,
+          "Неправильные почта или пароль"
+        ],
+        [
+          404,
+          "Пользователь не найден"
+        ]
+      ]
+    },
+    {
+      "id": "cards",
+      "method": "POST",
+      "path": "/api/cards",
+      "title": "Добавление карточки места",
+      "auth": true,
+      "fields": [
+        {
+          "field": "name",
+          "type": "string",
+          "required": true,
+          "rule": "2–30 символов"
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "required": true,
+          "rule": "валидный URL изображения"
+        }
+      ],
+      "success": {
+        "status": 201,
+        "body": "data: _id, name, link, owner, likes[], createdAt"
+      },
+      "errors": [
+        [
+          400,
+          "Отсутствует наименование"
+        ],
+        [
+          400,
+          "Отсутствует ссылка на изображение"
+        ],
+        [
+          400,
+          "Наименование введено некорректно"
+        ],
+        [
+          400,
+          "Ссылка введена некорректно"
+        ],
+        [
+          401,
+          "Требуется авторизация"
+        ]
+      ]
+    }
+  ],
+  "strategy": [
+    [
+      "Регистрация пользователя",
+      "Комбинации email и пароля: пустые поля, формат, длина, допустимые символы, валидные данные",
+      "Классы эквивалентности, граничные значения, негативные сценарии"
+    ],
+    [
+      "Авторизация пользователя",
+      "Вход с корректными и некорректными данными, пустыми полями, несуществующим пользователем",
+      "Таблица принятия решений, классы эквивалентности"
+    ],
+    [
+      "Обработка токена",
+      "Отсутствие токена, недействительный токен, успешная авторизация",
+      "Позитивные и негативные сценарии"
+    ],
+    [
+      "Добавление карточки места",
+      "Поля name и link: пустые, короткие, длинные, неверный URL, корректные значения",
+      "Классы эквивалентности, граничные значения"
+    ],
+    [
+      "Ответы сервера",
+      "Структура и типы полей успешного ответа, коды состояния",
+      "Позитивные и негативные сценарии"
+    ],
+    [
+      "Обработка ошибок",
+      "Сообщения при валидации, отсутствии параметров, неверных данных, неавторизованном доступе",
+      "Таблица принятия решений, негативные сценарии"
+    ]
+  ],
+  "decision": {
+    "columns": [
+      "Email валиден",
+      "Пароль валиден",
+      "Пользователь существует"
+    ],
+    "variants": [
+      {
+        "id": "A",
+        "title": "Вариант A: любая ошибка данных даёт 401",
+        "rows": [
+          [
+            1,
+            1,
+            1,
+            "200",
+            "Успешная авторизация, token"
+          ],
+          [
+            1,
+            1,
+            0,
+            "404",
+            "Пользователь не найден"
+          ],
+          [
+            1,
+            0,
+            1,
+            "401",
+            "Неправильные почта или пароль"
+          ],
+          [
+            1,
+            0,
+            0,
+            "401",
+            "Неправильные почта или пароль"
+          ],
+          [
+            0,
+            1,
+            1,
+            "401",
+            "Неправильные почта или пароль"
+          ],
+          [
+            0,
+            1,
+            0,
+            "401",
+            "Неправильные почта или пароль"
+          ],
+          [
+            0,
+            0,
+            1,
+            "401",
+            "Неправильные почта или пароль"
+          ],
+          [
+            0,
+            0,
+            0,
+            "401",
+            "Неправильные почта или пароль"
+          ]
+        ]
+      },
+      {
+        "id": "B",
+        "title": "Вариант B: формат email проверяется отдельно (по документации)",
+        "rows": [
+          [
+            1,
+            1,
+            1,
+            "200",
+            "Успешная авторизация, token"
+          ],
+          [
+            1,
+            0,
+            1,
+            "401",
+            "Неправильные почта или пароль"
+          ],
+          [
+            0,
+            1,
+            1,
+            "400",
+            "Почта введена некорректно"
+          ],
+          [
+            0,
+            0,
+            1,
+            "401",
+            "Неправильные почта или пароль"
+          ],
+          [
+            1,
+            1,
+            0,
+            "404",
+            "Пользователь не найден"
+          ],
+          [
+            0,
+            1,
+            0,
+            "404",
+            "Пользователь не найден"
+          ],
+          [
+            0,
+            0,
+            0,
+            "404",
+            "Пользователь не найден"
+          ]
+        ]
+      }
+    ],
+    "diff": "Расхождения: некорректный email у существующего пользователя (401 или 400) и сочетания с несуществующим пользователем (401 или 404)."
+  },
+  "gray_zones": [
+    {
+      "id": "GZ-P1",
+      "topic": "Длина email",
+      "problem": "В документации длина считается для всей строки (5–50). В примерах из материалов считалась длина части до «@».",
+      "question": "Что именно ограничено: вся строка или часть до «@»?",
+      "assumption": "Принято: вся строка. Границы строятся по общей длине."
+    },
+    {
+      "id": "GZ-P2",
+      "topic": "Пустое значение или отсутствие поля",
+      "problem": "Сообщение для пустой строки в email, password, name не определено: «Не передан обязательный параметр» или «…некорректно».",
+      "question": "Одинаково ли обрабатываются пустая строка и отсутствие поля?",
+      "assumption": "Проверяется только код ответа (400)."
+    },
+    {
+      "id": "GZ-P3",
+      "topic": "Вход: некорректный формат email",
+      "problem": "Документация даёт 400 «Почта введена некорректно», а в одном из вариантов таблицы принят 401.",
+      "question": "Проверяется ли формат email при входе?",
+      "assumption": "Принято по документации: 400."
+    },
+    {
+      "id": "GZ-P4",
+      "topic": "Вход: несуществующий пользователь",
+      "problem": "Один вариант таблицы даёт 404 для любых данных, другой смешивает 401 и 404.",
+      "question": "Какой код при несуществующем пользователе и неверном пароле?",
+      "assumption": "Принято: 404 для корректных данных."
+    },
+    {
+      "id": "GZ-P5",
+      "topic": "Допустимые спецсимволы пароля",
+      "problem": "Дан пример «!@#$%^&*()», полный список не определён; кириллица не описана.",
+      "question": "Какие символы допустимы?",
+      "assumption": "Кириллица считается недопустимой."
+    },
+    {
+      "id": "GZ-P6",
+      "topic": "Пробелы в названии места",
+      "problem": "Пробел до или после названия: обрезается ли, входит ли в длину?",
+      "question": "Применяется ли trim?",
+      "assumption": "Проверка не включена в чек-лист."
+    },
+    {
+      "id": "GZ-P7",
+      "topic": "Формат ссылки",
+      "problem": "Не определены допустимые схемы (http, ftp), проверка доступности изображения.",
+      "question": "Что считается валидным URL?",
+      "assumption": "Проверяется формат «https://…»."
+    },
+    {
+      "id": "GZ-P8",
+      "topic": "Токен",
+      "problem": "Не указаны срок жизни и формат заголовка (с префиксом Bearer или без).",
+      "question": "Как передавать токен?",
+      "assumption": "Заголовок Authorization со значением токена."
+    },
+    {
+      "id": "GZ-P9",
+      "topic": "Ошибка 500 при регистрации",
+      "problem": "Внутренняя ошибка описана в документации, условия её воспроизведения не указаны.",
+      "question": "Когда возвращается 500?",
+      "assumption": "Не проверяется."
+    },
+    {
+      "id": "GZ-P10",
+      "topic": "Регистр email",
+      "problem": "Считаются ли «A@x.ru» и «a@x.ru» одним пользователем?",
+      "question": "Нужна ли нормализация?",
+      "assumption": "Не проверяется."
+    },
+    {
+      "id": "GZ-P11",
+      "topic": "Создание записи в БД",
+      "problem": "Проверить сохранение пользователя в базе нельзя: нет доступа к БД и нет метода чтения.",
+      "question": "Есть ли метод получения пользователя?",
+      "assumption": "Пропущено (Skipped)."
+    }
+  ],
+  "checks": [
+    {
+      "id": "PL-001",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Валидные email и пароль",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": true,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-002",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Email: 4 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 4,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Почта введена некорректно",
+      "note": "нижняя граница: форматно невалидна при любой длине",
+      "gz": "GZ-P1"
+    },
+    {
+      "id": "PL-003",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Email: 5 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 5,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P1"
+    },
+    {
+      "id": "PL-004",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Email: 6 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 6,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P1"
+    },
+    {
+      "id": "PL-005",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Email: 10 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 10,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P1"
+    },
+    {
+      "id": "PL-006",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Email: 49 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 49,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P1"
+    },
+    {
+      "id": "PL-007",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Email: 50 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 50,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P1"
+    },
+    {
+      "id": "PL-008",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Email: 51 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 51,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Почта введена некорректно",
+      "note": "",
+      "gz": "GZ-P1"
+    },
+    {
+      "id": "PL-009",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Email с недопустимыми символами",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "te()st@exam!ple.com",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Почта введена некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-010",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пустой email",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P2"
+    },
+    {
+      "id": "PL-011",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Нет поля email",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Не передан обязательный параметр",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-012",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Нет поля password",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "user@example.com"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Не передан обязательный параметр",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-013",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пароль: 7 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Пароль введен некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-014",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Пароль: 8 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-015",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Пароль: 9 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-016",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Пароль: 19 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaaaaaaaaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-017",
+      "ep": "signup",
+      "group": "Позитивные",
+      "title": "Пароль: 20 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaaaaaaaaaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-018",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пароль: 21 симв.",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1@aaaaaaaaaaaaaaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Пароль введен некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-019",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пустой пароль",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": ""
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P2"
+    },
+    {
+      "id": "PL-020",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пароль без заглавной буквы",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Пароль введен некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-021",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пароль без строчной буквы",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "QQ1@AAAAAA"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Пароль введен некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-022",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пароль без цифры",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qqq@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Пароль введен некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-023",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пароль без спецсимвола",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "Qq1aaaaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Пароль введен некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-024",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Пароль с кириллицей",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "",
+        "password": "QЩ1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": 20,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P5"
+    },
+    {
+      "id": "PL-025",
+      "ep": "signup",
+      "group": "Негативные",
+      "title": "Повторная регистрация того же email",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": {
+        "email": "{{regEmail}}",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 409,
+      "message": "Пользователь с таким email уже существует",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-026",
+      "ep": "signin",
+      "group": "Позитивные",
+      "title": "Вход с валидными данными (сохраняет token)",
+      "method": "POST",
+      "path": "/api/signin",
+      "auth": "none",
+      "body": {
+        "email": "{{regEmail}}",
+        "password": "{{regPass}}"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 200,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-027",
+      "ep": "signin",
+      "group": "Негативные",
+      "title": "Нет поля email",
+      "method": "POST",
+      "path": "/api/signin",
+      "auth": "none",
+      "body": {
+        "password": "{{regPass}}"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Не передан обязательный параметр",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-028",
+      "ep": "signin",
+      "group": "Негативные",
+      "title": "Нет поля password",
+      "method": "POST",
+      "path": "/api/signin",
+      "auth": "none",
+      "body": {
+        "email": "{{regEmail}}"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Не передан обязательный параметр",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-029",
+      "ep": "signin",
+      "group": "Негативные",
+      "title": "Некорректный формат email",
+      "method": "POST",
+      "path": "/api/signin",
+      "auth": "none",
+      "body": {
+        "email": "te()st@exam!ple.com",
+        "password": "{{regPass}}"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Почта введена некорректно",
+      "note": "",
+      "gz": "GZ-P3"
+    },
+    {
+      "id": "PL-030",
+      "ep": "signin",
+      "group": "Негативные",
+      "title": "Неверный пароль существующего пользователя",
+      "method": "POST",
+      "path": "/api/signin",
+      "auth": "none",
+      "body": {
+        "email": "{{regEmail}}",
+        "password": "Wrong1@aaaa"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 401,
+      "message": "Неправильные почта или пароль",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-031",
+      "ep": "signin",
+      "group": "Негативные",
+      "title": "Несуществующий пользователь",
+      "method": "POST",
+      "path": "/api/signin",
+      "auth": "none",
+      "body": {
+        "email": "nouser.0000@example.com",
+        "password": "Qq1@aaaaaa"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 404,
+      "message": "Пользователь не найден",
+      "note": "",
+      "gz": "GZ-P4"
+    },
+    {
+      "id": "PL-032",
+      "ep": "cards",
+      "group": "Позитивные",
+      "title": "Валидные name и link",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Смурфленд",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-033",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Название: 1 симв.",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Я",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Наименование введено некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-034",
+      "ep": "cards",
+      "group": "Позитивные",
+      "title": "Название: 2 симв.",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Яа",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-035",
+      "ep": "cards",
+      "group": "Позитивные",
+      "title": "Название: 3 симв.",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Яаа",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-036",
+      "ep": "cards",
+      "group": "Позитивные",
+      "title": "Название: 29 симв.",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Яаааааааааааааааааааааааааааа",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-037",
+      "ep": "cards",
+      "group": "Позитивные",
+      "title": "Название: 30 симв.",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Яааааааааааааааааааааааааааааа",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 201,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-038",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Название: 31 симв.",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Яаааааааааааааааааааааааааааааа",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Наименование введено некорректно",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-039",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Пустое название",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P2"
+    },
+    {
+      "id": "PL-040",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Нет поля name",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Отсутствует наименование",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-041",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Нет поля link",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Смурфленд"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Отсутствует ссылка на изображение",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-042",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Невалидная ссылка",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Смурфленд",
+        "link": "RandomText"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": "Ссылка введена некорректно",
+      "note": "",
+      "gz": "GZ-P7"
+    },
+    {
+      "id": "PL-043",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Пустая ссылка",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "token",
+      "body": {
+        "name": "Смурфленд",
+        "link": ""
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": null,
+      "note": "",
+      "gz": "GZ-P2"
+    },
+    {
+      "id": "PL-044",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Нет токена авторизации",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "none",
+      "body": {
+        "name": "Смурфленд",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 401,
+      "message": "Требуется авторизация",
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-045",
+      "ep": "cards",
+      "group": "Негативные",
+      "title": "Некорректный токен",
+      "method": "POST",
+      "path": "/api/cards",
+      "auth": "bad",
+      "body": {
+        "name": "Смурфленд",
+        "link": "https://example.com/image.jpg"
+      },
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 401,
+      "message": "Требуется авторизация",
+      "note": "",
+      "gz": "GZ-P8"
+    },
+    {
+      "id": "PL-046",
+      "ep": "common",
+      "group": "Негативные",
+      "title": "Невалидный JSON в теле",
+      "method": "POST",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": null,
+      "raw": "{\"email\": \"user@example.com\", \"password\": ",
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 400,
+      "message": null,
+      "note": "",
+      "gz": null
+    },
+    {
+      "id": "PL-047",
+      "ep": "common",
+      "group": "Негативные",
+      "title": "Метод GET вместо POST для регистрации",
+      "method": "GET",
+      "path": "/api/signup",
+      "auth": "none",
+      "body": null,
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 405,
+      "message": null,
+      "note": "код 405 не описан в документации",
+      "gz": null
+    },
+    {
+      "id": "PL-048",
+      "ep": "common",
+      "group": "Негативные",
+      "title": "Метод PUT вместо POST для входа",
+      "method": "PUT",
+      "path": "/api/signin",
+      "auth": "none",
+      "body": null,
+      "raw": null,
+      "email_len": null,
+      "email_var": false,
+      "pw_var": false,
+      "status": 405,
+      "message": null,
+      "note": "код 405 не описан в документации",
+      "gz": null
+    }
+  ]
+}

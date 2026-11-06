@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><script src="assets/head.js"></script><link rel="stylesheet" href="assets/console.css"><title>Разбор API: Places</title>
+<style>.tabs button.on{border-color:var(--ac,#3ddc97);color:var(--ac,#3ddc97)}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}tr.d td{background:rgba(255,170,0,.14)}td.n,td.y{text-align:center}.sm{font-size:.85rem}.codebox{white-space:pre-wrap;word-break:break-all}</style></head>
+<body><div class="shell"><aside></aside><main>
+<div class="path"></div>
+<h1>Разбор API: Places</h1>
+<p class="lead">Дополнительный разбор: полный цикл тест-дизайна для трёх методов (регистрация, вход, добавление карточки). Оракул, генератор границ, таблица решений с двумя вариантами и серые зоны.</p>
+<div class="tabs row" id="tabs"><button data-t="spec" class="on">Контракт</button><button data-t="oracle">Оракул</button><button data-t="bv">Генератор границ</button><button data-t="dt">Таблица решений</button><button data-t="gz">Серые зоны</button><button data-t="cl">Чек-лист</button></div>
+<div id="view"></div>
+</main></div>
+<script src="assets/app.js"></script><script>
+shell('places');
+var D, tab = 'spec', variant = 'B';
+const MK = (total) => { const d = '@b.c'; const l = Math.max(total - d.length, 0); return 'abcdefghijklmnopqrstuvwxyz'.repeat(3).slice(0, l) + d; };
+const PW = n => 'Qq1@' + 'a'.repeat(Math.max(n - 4, 0));
+const emailFmt = e => /^[A-Za-z0-9.\-]+@[A-Za-z0-9.\-]+\.[A-Za-z0-9\-]+$/.test(e) && (e.match(/@/g) || []).length === 1;
+const emailOk = e => e.length >= 5 && e.length <= 50 && emailFmt(e);
+const pwOk = p => p.length >= 8 && p.length <= 20 && /^[\x21-\x7E]+$/.test(p) && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p) && /[^A-Za-z0-9]/.test(p);
+const nameOk = n => n.length >= 2 && n.length <= 30;
+const linkOk = l => /^https?:\/\/[^\s\/]+\.[^\s\/]+(\/\S*)?$/.test(l);
+const MISS = 'Не передан обязательный параметр';
+
+function oracle(ep, f) {
+  if (ep === 'signup') {
+    if (f.email === undefined || f.password === undefined) return [400, MISS, 'Нет обязательного поля'];
+    if (f.email === '' || f.password === '') return [400, '(текст не определён)', 'Пустое значение: серая зона GZ-P2'];
+    if (!emailOk(f.email)) return [400, 'Почта введена некорректно', 'Email: длина 5–50 (вся строка) и формат'];
+    if (!pwOk(f.password)) return [400, 'Пароль введен некорректно', 'Пароль: 8–20, заглавная, строчная, цифра, спецсимвол'];
+    if (f.exists) return [409, 'Пользователь с таким email уже существует', 'Email уже зарегистрирован'];
+    return [201, 'data: _id, email, name, about, avatar', 'Валидные данные'];
+  }
+  if (ep === 'signin') {
+    if (f.email === undefined || f.password === undefined) return [400, MISS, 'Нет обязательного поля'];
+    const e = emailFmt(f.email) ? 1 : 0, p = f.correct ? 1 : 0, x = f.exists ? 1 : 0;
+    const row = D.decision.variants.find(v => v.id === variant).rows.find(r => r[0] === e && r[1] === p && r[2] === x);
+    if (!row) return [404, 'Пользователь не найден', 'Комбинации нет в варианте ' + variant + ': принято 404'];
+    return [+row[3], row[4], `Строка таблицы, вариант ${variant}: email ${e ? 'валиден' : 'невалиден'}, пароль ${p ? 'верный' : 'неверный'}, пользователь ${x ? 'есть' : 'нет'}`];
+  }
+  if (f.token === 'none' || f.token === 'bad') return [401, 'Требуется авторизация', f.token === 'none' ? 'Нет токена' : 'Некорректный токен'];
+  if (f.name === undefined) return [400, 'Отсутствует наименование', 'Нет поля name'];
+  if (f.link === undefined) return [400, 'Отсутствует ссылка на изображение', 'Нет поля link'];
+  if (f.name === '' || f.link === '') return [400, '(текст не определён)', 'Пустое значение: серая зона GZ-P2'];
+  if (!nameOk(f.name)) return [400, 'Наименование введено некорректно', 'Название: длина 2–30'];
+  if (!linkOk(f.link)) return [400, 'Ссылка введена некорректно', 'Ссылка: валидный URL'];
+  return [201, 'data: _id, name, link, owner, likes[], createdAt', 'Валидные данные'];
+}
+
+function viewSpec() {
+  return `<div class="two">${D.endpoints.map(e => `<div class="card"><h3>${mb(e.method)} <span class="mono">${e.path}</span></h3><p class="mut">${esc(e.title)}${e.auth ? ' · нужен токен' : ''}</p>
+  <table><tr><th>Поле</th><th>Правило</th></tr>${e.fields.map(f => `<tr><td class="mono">${f.field}</td><td>${esc(f.rule)}</td></tr>`).join('')}</table>
+  <p>Успех: ${sp(e.success.status)} <span class="mut sm">${esc(e.success.body)}</span></p>
+  <details><summary>Ошибки (${e.errors.length})</summary><table>${e.errors.map(x => `<tr><td>${sp(x[0])}</td><td>${esc(x[1])}</td></tr>`).join('')}</table></details></div>`).join('')}</div>
+  <div class="card"><h3>Стратегия</h3><table><tr><th>Объект</th><th>Что проверяем</th><th>Техника</th></tr>${D.strategy.map(s => `<tr><td>${esc(s[0])}</td><td>${esc(s[1])}</td><td>${esc(s[2])}</td></tr>`).join('')}</table></div>
+  <div class="card"><h3>Как пройти цепочку в Postman</h3><ol><li>Импортируйте коллекцию <span class="mono">places-api.postman_collection.json</span> (раздел «Файлы») и укажите <span class="mono">baseUrl</span>.</li><li>Запустите папку «Регистрация»: первая проверка создаёт пользователя и сохраняет его почту.</li><li>Запустите «Авторизацию»: успешный вход сохраняет token.</li><li>Запустите «Карточки»: токен подставляется в заголовок Authorization.</li></ol></div>`;
+}
+
+const PRE = { signup: [['Валидные данные', { email: 'user.one@example.com', password: 'Qwerty123@' }], ['Пароль без цифры', { email: 'user.one@example.com', password: 'Qwerty@aaa' }], ['Email 51 символ', { email: MK(51), password: 'Qwerty123@' }], ['Нет password', { email: 'user.one@example.com' }], ['Пароль с кириллицей', { email: 'user.one@example.com', password: 'QЩ1@aaaaaa' }]],
+  signin: [['Валидные данные', { email: 'user.one@example.com', password: 'x' }], ['Некорректный email', { email: 'te()st@exam!ple.com', password: 'x' }], ['Нет email', { password: 'x' }]],
+  cards: [['Валидная карточка', { name: 'Смурфленд', link: 'https://example.com/image.jpg' }], ['Название из 1 символа', { name: 'С', link: 'https://example.com/image.jpg' }], ['Название из 31 символа', { name: 'С'.repeat(31), link: 'https://example.com/image.jpg' }], ['Невалидная ссылка', { name: 'Смурфленд', link: 'RandomText' }], ['Нет ссылки', { name: 'Смурфленд' }]] };
+function viewOracle() {
+  return `<div class="card"><div class="row"><select id="ep"><option value="signup">POST /api/signup</option><option value="signin">POST /api/signin</option><option value="cards">POST /api/cards</option></select><select id="pr"></select>
+  <label class="mut" id="l1"><input type="checkbox" id="ex"> пользователь существует</label><label class="mut" id="l2"><input type="checkbox" id="cr" checked> пароль верный</label>
+  <select id="tk"><option value="ok">токен есть</option><option value="none">нет токена</option><option value="bad">некорректный токен</option></select>
+  <select id="vr"><option value="B">вариант B (документация)</option><option value="A">вариант A</option></select></div>
+  <textarea id="bd" spellcheck="false" style="width:100%;min-height:110px"></textarea><div class="row"><button class="p" id="go">▶ Отправить в оракул</button></div><div id="out"></div></div>`;
+}
+function bindOracle() {
+  const ep = $('#ep'), pr = $('#pr');
+  const fill = () => { pr.innerHTML = PRE[ep.value].map((p, i) => `<option value="${i}">${esc(p[0])}</option>`).join(''); setBody(); ui(); };
+  const setBody = () => $('#bd').value = JSON.stringify(PRE[ep.value][pr.value || 0][1], null, 2);
+  const ui = () => { $('#l1').style.display = ep.value !== 'cards' ? '' : 'none'; $('#l2').style.display = ep.value === 'signin' ? '' : 'none'; $('#tk').style.display = ep.value === 'cards' ? '' : 'none'; $('#vr').style.display = ep.value === 'signin' ? '' : 'none'; $('#ex').parentNode.lastChild.textContent = ' пользователь существует'; };
+  ep.onchange = fill; pr.onchange = setBody; fill();
+  $('#go').onclick = () => {
+    let j; try { j = JSON.parse($('#bd').value); } catch (e) { $('#out').innerHTML = `<div class="card">${sp(400)} <b>Невалидный JSON</b> <span class="mut">(проверка «Невалидный JSON в теле»)</span></div>`; return; }
+    variant = $('#vr').value; const f = { ...j, exists: $('#ex').checked, correct: $('#cr').checked, token: $('#tk').value };
+    const [st, msg, why] = oracle(ep.value, f);
+    $('#out').innerHTML = `<div class="card"><div>${sp(st)} <b>${esc(msg)}</b></div><p class="mut sm">Правило: ${esc(why)}</p><pre class="codebox">${esc(JSON.stringify(st >= 400 ? { message: msg } : { status: st }, null, 2))}</pre></div>`;
+  };
+}
+
+function bvRows(field) {
+  const L = [[4, 400], [5, 201], [6, 201], [10, 201], [49, 201], [50, 201], [51, 400]];
+  if (field === 'email') return L.map(([n, s]) => [MK(n), n, s, n === 4 ? 'нижняя граница: форматно невалидна' : n === 5 || n === 50 ? 'граница' : '']);
+  if (field === 'password') return [[7, 400], [8, 201], [9, 201], [19, 201], [20, 201], [21, 400]].map(([n, s]) => [PW(n), n, s, n === 8 || n === 20 ? 'граница' : '']);
+  return [[1, 400], [2, 201], [3, 201], [29, 201], [30, 201], [31, 400]].map(([n, s]) => ['Я' + 'а'.repeat(n - 1), n, s, n === 2 || n === 30 ? 'граница' : '']);
+}
+function viewBv() {
+  return `<div class="card"><p class="mut">Значения строятся по длине всей строки (допущение GZ-P1). Меняйте поле и копируйте набор в тест.</p><div class="row"><select id="fld"><option value="email">email (5–50)</option><option value="password">password (8–20)</option><option value="name">name карточки (2–30)</option></select><button id="cp">Копировать значения</button></div><div id="tb"></div></div>`;
+}
+function bindBv() {
+  const draw = () => { const r = bvRows($('#fld').value); $('#tb').innerHTML = `<table><tr><th>Значение</th><th>Длина</th><th>Ожидание</th><th>Заметка</th></tr>${r.map(x => `<tr><td class="mono codebox">${esc(x[0])}</td><td>${x[1]}</td><td>${sp(x[2])}</td><td class="mut sm">${x[3]}</td></tr>`).join('')}</table>`; };
+  $('#fld').onchange = draw; draw();
+  $('#cp').onclick = () => copy(bvRows($('#fld').value).map(x => `${x[0]}  # ${x[1]} -> ${x[2]}`).join('\n'));
+}
+
+function viewDt() {
+  const A = D.decision.variants[0].rows, B = D.decision.variants[1].rows, c = D.decision.columns;
+  const find = (rows, r) => rows.find(x => x[0] === r[0] && x[1] === r[1] && x[2] === r[2]);
+  const combos = []; for (let e = 1; e >= 0; e--) for (let p = 1; p >= 0; p--) for (let x = 1; x >= 0; x--) combos.push([e, p, x]);
+  const yn = v => v ? 'Да' : 'Нет';
+  return `<div class="card"><p>В материалах для входа было два набора ожидаемых результатов. Ниже они сравнены по всем 8 комбинациям: оранжевым выделены расхождения.</p><table><tr><th>${c[0]}</th><th>${c[1]}</th><th>${c[2]}</th><th>Вариант A</th><th>Вариант B</th></tr>${combos.map(r => {
+    const a = find(A, r), b = find(B, r), ta = a ? `${a[3]} · ${esc(a[4])}` : '—', tb = b ? `${b[3]} · ${esc(b[4])}` : '—';
+    return `<tr class="${ta !== tb ? 'd' : ''}"><td class="${r[0] ? 'y' : 'n'}">${yn(r[0])}</td><td class="${r[1] ? 'y' : 'n'}">${yn(r[1])}</td><td class="${r[2] ? 'y' : 'n'}">${yn(r[2])}</td><td>${ta}</td><td>${tb}</td></tr>`;
+  }).join('')}</table><p class="mut">${esc(D.decision.diff)} Вопрос аналитику: какой вариант считать эталоном? Пока принят вариант B (по документации).</p></div>`;
+}
+function viewGz() { return `<div class="card"><table><tr><th>ID</th><th>Тема</th><th>Проблема</th><th>Вопрос</th><th>Допущение</th></tr>${D.gray_zones.map(g => `<tr><td class="mono">${g.id}</td><td>${esc(g.topic)}</td><td>${esc(g.problem)}</td><td>${esc(g.question)}</td><td>${esc(g.assumption)}</td></tr>`).join('')}</table></div>`; }
+function viewCl() {
+  return `<div class="card"><div class="row"><select id="cf"><option value="">Все методы</option><option>signup</option><option>signin</option><option>cards</option><option>common</option></select><input type="search" id="cq" placeholder="поиск, например «пароль»"><span class="mut" id="cc"></span></div><div id="ct"></div></div>`;
+}
+function bindCl() {
+  const draw = () => { const q = $('#cq').value.toLowerCase(), f = $('#cf').value; const r = D.checks.filter(c => (!f || c.ep === f) && (!q || (c.title + c.id).toLowerCase().includes(q)));
+    $('#cc').textContent = r.length + ' из ' + D.checks.length;
+    $('#ct').innerHTML = `<table><tr><th>ID</th><th>Запрос</th><th>Проверка</th><th>Ожидание</th><th>ГЗ</th></tr>${r.map(c => `<tr><td class="mono">${c.id}</td><td>${mb(c.method)} <span class="mono sm">${c.path}</span></td><td>${esc(c.title)}</td><td>${sp(c.status)} <span class="sm mut">${esc(c.message || '')}</span></td><td class="mono sm">${c.gz || ''}</td></tr>`).join('')}</table>`; };
+  $('#cf').onchange = draw; $('#cq').oninput = draw; draw();
+}
+function render() {
+  $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+  $('#view').innerHTML = { spec: viewSpec, oracle: viewOracle, bv: viewBv, dt: viewDt, gz: viewGz, cl: viewCl }[tab]();
+  ({ oracle: bindOracle, bv: bindBv, cl: bindCl }[tab] || (() => { }))();
+}
+$$('#tabs button').forEach(b => b.onclick = () => { tab = b.dataset.t; render(); });
+load('api-places.json').then(d => { D = d; render(); });
+</script></body></html>

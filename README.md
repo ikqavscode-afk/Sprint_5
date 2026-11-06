@@ -59,11 +59,17 @@ sequenceDiagram
 | [`bug-reports/`](bug-reports/bug-reports.md) | 45 дефектов, 10 подробно, со скриншотами |
 | [`reports/`](reports/) | анализ дефектов |
 | [`postman/`](postman/) | коллекция Postman и шаблон окружения |
+| [`test-analysis/places-api.md`](test-analysis/places-api.md) | разбор API: стратегия, границы, таблица решений, серые зоны |
+| [`test-cases/places-api-checklist.md`](test-cases/places-api-checklist.md) | разбор API: чек-лист из 48 проверок |
 | [`api/openapi-tested.yaml`](api/openapi-tested.yaml) | восстановленный контракт проверенных методов |
 | [`regression/`](regression/retest-checklist.md) | ретест после исправлений |
 | [`checklist.md`](checklist.md) | чек-лист проекта: паспорт и результаты |
 | [`docs/`](docs/) | сайт GitHub Pages |
 | [`data/`](data/) | исходные данные в JSON |
+
+## Разбор API: Places
+
+Дополнительный разбор по дополнительным материалам: полный цикл тест-дизайна для API из трёх методов (регистрация, вход, добавление карточки). В нём стратегия, декомпозиция, классы эквивалентности и границы, два варианта таблицы принятия решений для входа, 11 серых зон, 48 проверок и коллекция Postman. Интерактивная версия с оракулом и генератором границ: **[Разбор API](https://ikqavscode-afk.github.io/Sprint_5/places.html)**. Скрипт генерации: `python3 scripts/build_places.py`.
 
 ## Быстрый старт: коллекция Postman
 
